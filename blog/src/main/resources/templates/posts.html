@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>방명록</title>
+    <style>
+        @import url('https://www.google.com/search?q=https://fonts.googleapis.com/css2%3Ffamily%3DNoto%2BSans%2BKR:wght%40300%3B400%3B500%3B700%26display%3Dswap');
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            color: #333;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin: 0;
+        }
+
+        .post-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .post-item {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .post-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .post-title {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #4a4a4a;
+            margin: 0 0 10px;
+        }
+
+        .post-content {
+            font-size: 1rem;
+            color: #777;
+            line-height: 1.6;
+        }
+
+        .add-post-btn {
+            background-color: #4a90e2;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .add-post-btn:hover {
+            background-color: #3672c5;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 50px 0;
+            font-size: 1.2rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>블로그</h1>
+        <a href="/post/new" class="add-post-btn">글 등록</a>
+    </div>
+    <div th:if="${#lists.isEmpty(posts)}" class="empty-message">
+        <p>작성된 글이 없습니다.</p>
+    </div>
+
+    <ul th:unless="${#lists.isEmpty(posts)}" class="post-list">
+        <li class="post-item" th:each="post : ${posts}">
+            <h2 class="post-title" th:text="${post.title}">게시글 제목</h2>
+            <p class="post-content" th:text="${post.content}">게시글 내용</p>
+        </li>
+    </ul>
+
+</div>
+
+</body>
+</html>
