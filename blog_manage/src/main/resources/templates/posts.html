@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 목록</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            padding: 2rem;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+        .post-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .post-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        .post-card:hover {
+            transform: translateY(-5px);
+        }
+        .post-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4a90e2;
+            margin-bottom: 0.5rem;
+        }
+        .post-content {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        /* 새 글 작성 버튼 스타일 */
+        .new-post-link {
+            display: block;
+            width: 180px;
+            margin: 0 auto 2rem;
+            text-align: center;
+            padding: 0.8rem;
+            background-color: #4a90e2;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.3s ease;
+
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 10;
+            position: relative;
+        }
+        .new-post-link:hover {
+            background-color: #357ab8;
+        }
+    </style>
+</head>
+<body>
+<h2>게시글 목록</h2>
+
+<a class="new-post-link" th:href="@{/posts/new}">✍ 새 글 작성</a>
+
+<div class="post-list">
+    <div class="post-card" th:each="post : ${posts}">
+        <div class="post-title" th:text="${post.title}">제목</div>
+        <div class="post-content" th:text="${post.content}">내용</div>
+    </div>
+</div>
+
+</body>
+</html>
