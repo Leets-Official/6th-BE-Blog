@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>게시글 목록</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 80%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .new-post-button {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+        .new-post-button:hover {
+            background-color: #0056b3;
+        }
+        .post-list {
+            list-style: none;
+            padding: 0;
+        }
+        .post-item {
+            background-color: #e9ecef;
+            border: 1px solid #dee2e6;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            /* Flexbox 추가 */
+            display: flex;
+            justify-content: space-between; /* 양쪽 끝으로 정렬 */
+            align-items: center; /* 수직 중앙 정렬 */
+        }
+        .post-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .post-title {
+            text-decoration: none;
+            color: #0056b3;
+            font-weight: bold;
+            font-size: 1.1em;
+            flex-grow: 1; /* 제목이 남은 공간을 차지하도록 */
+        }
+        .post-title:hover {
+            color: #007bff;
+        }
+        .post-date {
+            font-size: 0.9em;
+            color: #666;
+            white-space: nowrap; /* 줄바꿈 방지 */
+            margin-left: 20px; /* 제목과의 간격 */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>게시글 목록</h1>
+    <a href="/post/new" class="new-post-button">새 글 작성</a>
+
+    <ul class="post-list" th:if="${posts != null}">
+        <li th:each="post : ${posts}" class="post-item">
+            <a th:href="@{/post/{id}(id=${post.id})}" th:text="${post.title}" class="post-title">게시글 제목</a>
+            <span class="post-date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2023-10-27 10:30</span>
+        </li>
+    </ul>
+    <p th:if="${posts == null or posts.isEmpty()}">아직 작성된 게시글이 없습니다.</p>
+</div>
+</body>
+</html>
