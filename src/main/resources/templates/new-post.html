@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>새 글 작성</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        :root{
+            --bg:#f7f7fb; --card:#ffffff; --text:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#2563eb;
+        }
+        @media (prefers-color-scheme: dark){
+            :root{ --bg:#0b0c10; --card:#14161a; --text:#e5e7eb; --muted:#9aa0a6; --line:#20242a; --accent:#60a5fa; }
+        }
+        *{box-sizing:border-box}
+        body{font-family: ui-sans-serif, system-ui; background:var(--bg); color:var(--text); margin:0;}
+        .container{max-width:720px; margin:48px auto; padding:0 20px;}
+        .header{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;}
+        .title{font-size:26px; font-weight:800; letter-spacing:-0.02em; margin:0}
+        .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; box-shadow:0 1px 0 rgba(0,0,0,.03);}
+        .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+        label{display:block; font-weight:600; margin:6px 0}
+        input, textarea{
+            width:100%; padding:12px 12px; border:1px solid var(--line); border-radius:10px; background:transparent; color:var(--text);
+            outline:none; transition:border-color .12s ease, box-shadow .12s ease;
+        }
+        input:focus, textarea:focus{ border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent); }
+        .error{ color:#dc2626; font-size:12px; margin-top:6px;}
+        .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:10px; text-decoration:none; cursor:pointer;
+            border:1px solid var(--line); background:var(--card); color:var(--text);}
+        .btn.primary{ background:var(--accent); border-color:var(--accent); color:white; }
+        .btn:hover{ transform:translateY(-1px); box-shadow:0 8px 22px rgba(0,0,0,.08); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1 class="title">새 글 작성</h1>
+        <a class="btn" href="/posts">← 목록으로</a>
+    </div>
+
+    <div class="card">
+        <!-- 컨트롤러에서 model.addAttribute("postForm", new PostController.PostForm()) 제공 -->
+        <form th:action="@{/post/new}" th:object="${postForm}" method="post">
+            <div>
+                <label for="title">제목</label>
+                <input id="title" type="text" th:field="*{title}" placeholder="제목을 입력하세요" />
+                <div class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">제목 오류</div>
+            </div>
+
+            <div style="margin-top:12px;">
+                <label for="content">내용</label>
+                <textarea id="content" rows="10" th:field="*{content}" placeholder="내용을 입력하세요"></textarea>
+                <div class="error" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">내용 오류</div>
+            </div>
+
+            <div class="row">
+                <button type="submit" class="btn primary">저장</button>
+                <a class="btn" href="/posts">취소</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
