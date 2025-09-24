@@ -14,7 +14,7 @@ public class PostRepository {
 
     private final AtomicLong postId = new AtomicLong(0);
 
-    public final HashMap<Long, Post> store = new HashMap<>();
+    private final HashMap<Long, Post> store = new HashMap<>();
 
     public void save(Post post) {
         post.setId(postId.incrementAndGet());

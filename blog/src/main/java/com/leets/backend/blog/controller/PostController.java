@@ -23,10 +23,6 @@ public class PostController {
     public String getPosts(Model model) {
         List<Post> result = postService.getPosts();
 
-        for(Post p: result) {
-            System.out.println(p.getId());
-        }
-
         model.addAttribute("posts", result);
         return "posts";
     }
