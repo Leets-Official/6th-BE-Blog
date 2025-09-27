@@ -22,21 +22,18 @@ public class PostController {
     // http://localhost:8080/posts
     @GetMapping("/posts")
     public String listPosts(Model model) {
-        model.addAttribute("posts", postService.getAllPosts());
-        return "posts"; // posts.html 뷰 반환
+        return "posts";
     }
 
     // http://localhost:8080/post/new
     @GetMapping("/post/new")
     public String newPostForm() {
-        return "new-post"; // new-post.html 뷰 반환
+        return "new-post";
     }
 
     @PostMapping("/posts")
     public String createPost(@RequestParam("title") String title,
                              @RequestParam("content") String content) {
-        Post post = new Post(null, title, content); // ID는 Repository에서 자동 생성
-        postService.createPost(post);
-        return "redirect:/posts"; // 게시글 목록 페이지로 리다이렉트
+        return "redirect:/posts";
     }
 }
