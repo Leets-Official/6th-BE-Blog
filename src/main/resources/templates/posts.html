@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>블로그 - 글 목록</title>
+    <style>
+        :root{--bg:#0b0d10;--panel:#12161b;--card:#0f1318;--text:#e6edf3;--muted:#98a2b3;--primary:#6ea8fe;--border:#1e2630;--danger:#ff6b6b;--radius:16px;--shadow:0 10px 30px rgba(0,0,0,.35)}
+        @media (prefers-color-scheme: light){:root{--bg:#f6f7fb;--panel:#fff;--card:#fff;--text:#0f172a;--muted:#475569;--border:#e5e7eb;--shadow:0 10px 24px rgba(0,0,0,.08)}}
+        *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans KR","맑은 고딕",sans-serif}
+        .wrap{max-width:1100px;margin:40px auto;padding:0 20px}
+        header.nav{position:sticky;top:0;z-index:10;background:color-mix(in oklab,var(--panel) 74%,transparent);border-bottom:1px solid var(--border);backdrop-filter:saturate(180%) blur(8px)}
+        .nav-inner{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;gap:14px;align-items:center;justify-content:space-between}
+        .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
+        .logo{width:34px;height:34px;border-radius:10px;background:conic-gradient(from 0deg,var(--primary),#a58bff)}
+        .btn{border:1px solid var(--border);background:linear-gradient(180deg,color-mix(in oklab,var(--panel) 92%,transparent),color-mix(in oklab,#000 6%,transparent));color:var(--text);text-decoration:none;padding:10px 14px;border-radius:12px;font-weight:600}
+        .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+        .panel.pad{padding:18px}
+        .muted{color:var(--muted);font-size:13px}
+        .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px}
+        .meta{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+    </style>
+</head>
+<body>
+<header class="nav">
+    <div class="nav-inner">
+        <a class="brand" th:href="@{/posts}"><div class="logo" aria-hidden="true"></div><strong>Leets Blog</strong></a>
+        <a class="btn" th:href="@{/post/new}">＋ 새 글</a>
+    </div>
+</header>
+
+<div class="wrap">
+    <!-- 빈 목록 -->
+    <section class="panel pad" th:if="${#lists.isEmpty(posts)}">
+        <h2 style="margin:0 0 6px">아직 등록된 글이 없어요</h2>
+        <p class="muted">첫 글을 작성해 블로그를 시작해보세요.</p>
+        <div style="margin-top:12px">
+            <a class="btn" th:href="@{/post/new}">지금 작성하기</a>
+        </div>
+    </section>
+
+    <!-- 카드 목록 (수정/삭제/상세 버튼 제거됨) -->
+    <section class="panel pad" th:if="${!#lists.isEmpty(posts)}">
+        <div class="cards">
+            <article class="card" th:each="p : ${posts}">
+                <h3 style="margin:0" th:text="${p.title}">제목</h3>
+
+                <div class="meta">
+                    <span th:text="'작성: ' + ${#temporals.format(p.createdAt, 'yyyy.MM.dd HH:mm')}">작성: 2025.09.22 12:34</span>
+                    <span th:if="${p.updatedAt != null}" style="color:#37d67a;font-weight:700">업데이트됨</span>
+                    <span th:if="${p.updatedAt != null}"
+                          th:text="${#temporals.format(p.updatedAt, 'yyyy.MM.dd HH:mm')}">2025.09.22 12:40</span>
+                </div>
+            </article>
+        </div>
+    </section>
+</div>
+</body>
+</html>
+
