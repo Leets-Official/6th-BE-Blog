@@ -21,9 +21,9 @@ public class PostController {
 
     @GetMapping("/posts")
     public String getPosts(Model model) {
-        List<Post> result = postService.getPosts();
-
-        model.addAttribute("posts", result);
+        //List<Post> result = postService.getPosts();
+        //model.addAttribute("posts", result);
+        model.addAttribute("posts", null);
         return "posts";
     }
 
@@ -35,7 +35,7 @@ public class PostController {
     @PostMapping("/post/new")
     public String createPost(@RequestParam String title, @RequestParam String content) {
 
-        postService.createPost(title, content);
+        //postService.createPost(title, content);
         return "redirect:/posts";
     }
 }

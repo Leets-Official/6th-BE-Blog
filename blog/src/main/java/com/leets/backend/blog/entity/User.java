@@ -1,0 +1,73 @@
+package com.leets.backend.blog.entity;
+
+import com.leets.backend.blog.enums.LoginMethod;
+import jakarta.persistence.*;
+
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "user")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
+    @Column(nullable = false, unique = true)
+    private String email;
+    private String password;
+    @Column(nullable = false, length = 10)
+    private String name;
+    private LocalDate birthdate;
+    @Column(nullable = false, length = 20)
+    private String nickname;
+    @Column(length = 30)
+    private String introduction;
+    private String profileImage;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private LoginMethod loginMethod;
+    @Column(unique = true)
+    private String kakaoId;
+    @Column(nullable = false)
+    private LocalDate createdAt;
+    @Column(nullable = false)
+    private LocalDate updatedAt;
+
+    //Getters
+    public Long getUserId() {
+        return userId;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public String getName() {
+        return name;
+    }
+    public LocalDate getBirthdate() {
+        return birthdate;
+    }
+    public String getNickname() {
+        return nickname;
+    }
+    public String getIntroduction() {
+        return introduction;
+    }
+    public String getProfileImage() {
+        return profileImage;
+    }
+    public LoginMethod getLoginMethod() {
+        return loginMethod;
+    }
+    public String getKakaoId() {
+        return kakaoId;
+    }
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+    public LocalDate getUpdatedAt() {
+        return updatedAt;
+    }
+}
