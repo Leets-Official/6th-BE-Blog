@@ -20,6 +20,9 @@ build/
 log/
 temp/
 
+# IDE files
+.idea/
+
 # Spring Boot
 /target/
 /classes/
