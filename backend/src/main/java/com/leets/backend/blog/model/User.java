@@ -29,19 +29,12 @@ public class User {
     private String profileImage;
 
     @Column(length = 50, nullable = false)
-    private String provider = "local";
+    private String provider = "email"; //email 또는 kakao 가입
 
     @Column(length = 255)
     private String providerUserId;
 
-    @Column(length = 20, nullable = false)
-    private String role = "user";
-
-    @Column(length = 20, nullable = false)
-    private String status = "active";
-
     private LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime updatedAt = LocalDateTime.now();
 
     // 기본 생성자
     public User() {}
@@ -57,44 +50,7 @@ public class User {
         this.profileImage = profileImage;
         this.provider = provider;
         this.providerUserId = providerUserId;
-        this.role = role;
-        this.status = status;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
-
-    // Getter/Setter
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-
-    public String getNickname() { return nickname; }
-    public void setNickname(String nickname) { this.nickname = nickname; }
-
-    public String getProfileImage() { return profileImage; }
-    public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
-
-    public String getProvider() { return provider; }
-    public void setProvider(String provider) { this.provider = provider; }
-
-    public String getProviderUserId() { return providerUserId; }
-    public void setProviderUserId(String providerUserId) { this.providerUserId = providerUserId; }
-
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
 

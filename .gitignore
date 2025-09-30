@@ -1,6 +1,6 @@
 # Gradle
-.gradle
-/build/
+.gradle/
+build/
 
 # IDE
 .idea/
@@ -12,11 +12,10 @@
 .settings
 .classpath
 
-# Compiled class file
-### Java ###
+# Java
 *.class
 
-# Log file
+# Logs & temp
 *.log
 log/
 temp/
@@ -25,8 +24,7 @@ temp/
 /target/
 /classes/
 
-# Maven
-/target/
+# Maven (혹시 프로젝트 혼합 사용 대비)
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -36,11 +34,11 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 
-# Mac
+# macOS
 .DS_Store
 
 # Windows
 Thumbs.db
 
-# Other
+# Output
 /out/

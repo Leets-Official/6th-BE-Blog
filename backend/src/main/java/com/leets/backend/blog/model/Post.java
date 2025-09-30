@@ -1,18 +1,35 @@
 package com.leets.backend.blog.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-public class Post {
+    @Entity
+    @Table(name = "post")
+    public class Post {
 
-    private Long id; // 게시글 ID (HashMap의 Key)
-    private String title; // 게시글 제목
-    private String content; // 게시글 내용
-    private LocalDateTime createdAt; // 게시글 작성 시각
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long postId;
+
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "user_id", nullable = false)
+        private User user;
+
+        @Column(length = 255)
+        private String title;
+
+        @Lob
+        private String content;
+
+        @Column(length = 1024)
+        private String imageUrl;
+
+        private LocalDateTime createdAt = LocalDateTime.now();
 
     public Post() {}
 
     public Post(Long id, String title, String content, LocalDateTime createdAt) {
-        this.id = id;
+        this.postId = id;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
@@ -23,12 +40,12 @@ public class Post {
         this.content = content;
     }
 
-    public Long getId() {
-        return id;
+    public Long getpostId() {
+        return postId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setpostId(Long id) {
+        this.postId = postId;
     }
 
     public String getTitle() {

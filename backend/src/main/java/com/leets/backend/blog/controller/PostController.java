@@ -14,10 +14,8 @@ public class PostController {
 
     private final PostService postService = new PostService();
 
-    @GetMapping("/posts")
+    @GetMapping("/post")
     public String getAllPosts(Model model) {
-        List<Post> posts = postService.getAllPosts();
-        model.addAttribute("posts", posts);
         return "postList"; // postList.html 템플릿을 렌더링
     }
 
@@ -28,14 +26,12 @@ public class PostController {
 
     @PostMapping("/post/new")
     public String createPost(@RequestParam String title, @RequestParam String content) {
-        postService.createPost(title, content);
         return "redirect:/posts"; // 게시글 작성 후 목록 페이지로 리다이렉트
     }
 
     @GetMapping("/post/{id}")
     public ModelAndView getPostById(@PathVariable Long id) {
         ModelAndView mav = new ModelAndView("postDetail"); // postDetail.html 템플릿을 렌더링
-        postService.getPostById(id).ifPresent(post -> mav.addObject("post", post));
         return mav;
     }
 }
