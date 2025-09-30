@@ -1,0 +1,46 @@
+# Gradle
+.gradle
+/build/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.settings
+.classpath
+
+# Compiled class file
+### Java ###
+*.class
+
+# Log file
+*.log
+log/
+temp/
+
+# Spring Boot
+/target/
+/classes/
+
+# Maven
+/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Other
+/out/
