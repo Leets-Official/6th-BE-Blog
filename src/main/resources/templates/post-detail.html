@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${post.title} + ' - 상세'">상세</title>
+    <style>
+        :root{--bg:#0f1115;--card:#171922;--muted:#9aa4b2;--fg:#eef2f7;--acc:#7aa2f7;--danger:#ef4444}
+        body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui}
+        .wrap{max-width:860px;margin:32px auto;padding:0 16px}
+        .btn{padding:10px 14px;border-radius:10px;border:1px solid #2a2f3a;background:#1b1f2a;color:var(--fg);text-decoration:none}
+        .btn:hover{border-color:var(--acc);box-shadow:0 0 0 3px #7aa2f722}
+        .btn.acc{background:linear-gradient(135deg,var(--acc),#9b8afc);border-color:transparent}
+        .btn.danger{background:var(--danger);border-color:transparent}
+        .title{font-size:28px;font-weight:800;margin:8px 0}
+        .meta{color:var(--muted);font-size:12px;margin-bottom:12px}
+        .card{background:var(--card);border:1px solid #232838;border-radius:16px;padding:20px}
+        pre{white-space:pre-wrap;word-break:break-word;margin:0;line-height:1.6}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="btn" href="/posts">← 목록</a>
+
+    <div class="title" th:text="${post.title}">제목</div>
+    <div class="meta">
+        ID:
+        <span th:title="${post.id}"
+              th:text="${#strings.length(post.id) > 3 ? #strings.substring(post.id,0,3) + '...' : post.id}">id</span>
+        · 작성: <span th:text="${post.createdAt != null ? #temporals.format(post.createdAt,'yyyy-MM-dd HH:mm') : '—'}">—</span>
+        · 수정: <span th:text="${post.updatedAt != null ? #temporals.format(post.updatedAt,'yyyy-MM-dd HH:mm') : '—'}">—</span>
+    </div>
+
+    <div class="card">
+        <pre th:text="${post.content}">내용</pre>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:16px">
+        <a class="btn acc" th:href="@{|/post/${post.title}/edit|}">수정</a>
+        <form th:action="@{|/posts/${post.id}/delete|}" method="post" style="display:inline">
+            <button class="btn danger" type="submit" onclick="return confirm('삭제하시겠습니까?')">삭제</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+
+
+
