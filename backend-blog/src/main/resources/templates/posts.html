@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>블로그 글 목록</title>
+</head>
+<body>
+    <h1>게시글 목록</h1>
+    <a href="/post/new">새 글 작성하기</a>
+    <hr>
+    <div th:each="post : ${posts}">
+        <h2 th:text="${post.title}">게시글 제목</h2>
+        <p th:text="${post.content}">게시글 내용</p>
+        <hr>
+    </div>
+</body>
+</html>
