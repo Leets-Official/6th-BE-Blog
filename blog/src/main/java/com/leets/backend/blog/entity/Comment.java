@@ -1,23 +1,24 @@
 package com.leets.backend.blog.entity;
 
 import jakarta.persistence.*;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id")
     private Long commentId;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
-    @Column(nullable = false)
-    private LocalDate createdAt;
-    @ManyToOne
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
@@ -28,7 +29,7 @@ public class Comment {
     public String getContent() {
         return content;
     }
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
     public User getUser() {

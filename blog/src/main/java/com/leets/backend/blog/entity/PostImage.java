@@ -8,13 +8,14 @@ public class PostImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "image_id")
     private Long imageId;
     @Column(nullable = false)
     private String imageUrl;
     @Column(nullable = false)
     private boolean isThumbnail;
     private Integer orderIndex;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="post_id", nullable = false)
     private Post post;
 

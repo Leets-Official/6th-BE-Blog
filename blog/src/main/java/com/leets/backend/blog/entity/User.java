@@ -4,6 +4,7 @@ import com.leets.backend.blog.enums.LoginMethod;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user")
@@ -11,6 +12,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long userId;
     @Column(nullable = false, unique = true)
     private String email;
@@ -28,10 +30,10 @@ public class User {
     private LoginMethod loginMethod;
     @Column(unique = true)
     private String kakaoId;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
     @Column(nullable = false)
-    private LocalDate createdAt;
-    @Column(nullable = false)
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
 
     //Getters
     public Long getUserId() {
@@ -64,10 +66,10 @@ public class User {
     public String getKakaoId() {
         return kakaoId;
     }
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-    public LocalDate getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 }
