@@ -1,6 +1,9 @@
 package com.leets.backend.blog.domain;
 
+import com.leets.backend.blog.util.StringUtil;
 import jakarta.persistence.*;
+import org.springframework.cglib.core.Local;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +85,14 @@ public class User {
         user.introduction = introduction;
         user.profileImgUrl = profileImgUrl;
         return user;
+    }
+
+    public void updateUser(String nickname, String email, String introduction, String name, String birthDate){
+        this.nickname = StringUtil.isNullOrEmpty(nickname) ? this.nickname : nickname;
+        this.email = StringUtil.isNullOrEmpty(email) ? this.email : email;
+        this.name = StringUtil.isNullOrEmpty(name) ? this.name : name;
+        this.birthDate = StringUtil.isNullOrEmpty(birthDate) ? this.birthDate : LocalDateTime.parse(birthDate);;
+        this.updateDate = LocalDateTime.now();
     }
 
     public Long getUserId() {

@@ -31,6 +31,11 @@ public class PostImg {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
+    // 기본 생성자
+    public PostImg() {
+
+    }
+
     public PostImg(Long postId, String imgUrl, Integer sortOrder) {
         this.postId = postId;
         this.imgUrl = imgUrl;
@@ -47,14 +52,6 @@ public class PostImg {
 
     public void setPostId(Long postId) {
         this.postId = postId;
-    }
-
-    public Boolean getIsThumbnail() {
-        return isThumbnail;
-    }
-
-    public void setIsThumbnail(Boolean thumbnail) {
-        isThumbnail = thumbnail;
     }
 
     public String getImgUrl() {

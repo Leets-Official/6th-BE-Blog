@@ -34,6 +34,11 @@ public class Comment {
         this.content = content;
     }
 
+    public void updateComment(String conetent) {
+        this.content = conetent;
+        this.updateDate = LocalDateTime.now();
+    }
+
     public Long getCommentId() {
         return commentId;
     }

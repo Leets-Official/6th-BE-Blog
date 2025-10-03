@@ -1,5 +1,6 @@
 package com.leets.backend.blog.domain;
 
+import com.leets.backend.blog.util.StringUtil;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,6 +40,12 @@ public class Post {
         this.userId = userId;
         this.title = title;
         this.content = content;
+    }
+
+    public void updatePost(String title, String content){
+        this.title = StringUtil.isNullOrEmpty(title) ? this.title : title;
+        this.content = StringUtil.isNullOrEmpty(content) ? this.content : content;
+        this.updateDate = LocalDateTime.now();
     }
 
     public Long getPostId() {
