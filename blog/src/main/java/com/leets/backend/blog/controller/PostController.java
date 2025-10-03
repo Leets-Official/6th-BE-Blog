@@ -1,14 +1,11 @@
 package com.leets.backend.blog.controller;
 
-import com.leets.backend.blog.model.Post;
 import com.leets.backend.blog.service.PostService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 public class PostController {
@@ -21,9 +18,7 @@ public class PostController {
 
     @GetMapping("/posts")
     public String getPosts(Model model) {
-        List<Post> result = postService.getPosts();
-
-        model.addAttribute("posts", result);
+        model.addAttribute("posts", null);
         return "posts";
     }
 
@@ -34,8 +29,6 @@ public class PostController {
 
     @PostMapping("/post/new")
     public String createPost(@RequestParam String title, @RequestParam String content) {
-
-        postService.createPost(title, content);
         return "redirect:/posts";
     }
 }
