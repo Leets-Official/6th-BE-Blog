@@ -2,9 +2,9 @@ package com.leets.backend.blog.domain;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
+@Entity
+@Table(name = "comments") // DB 테이블명
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가
@@ -25,21 +25,11 @@ public class Comment {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
-    @OneToMany(mappedBy = "userId")
-    private List<Post> posts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "userId")
-    private List<Comment> comments = new ArrayList<>();
-
     // 기본 생성자
     public Comment() {}
 
     public Long getCommentId() {
         return commentId;
-    }
-
-    public void setCommentId(Long commentId) {
-        this.commentId = commentId;
     }
 
     public String getPostId() {
@@ -80,21 +70,5 @@ public class Comment {
 
     public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
-    }
-
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
     }
 }

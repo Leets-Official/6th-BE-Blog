@@ -17,15 +17,19 @@ public class User {
     @Column(nullable = false, length = 10)
     private String name;
 
-    @Column(unique = true)
+    @Column(nullable = false,unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String password;
+
+    @Column(name = "is_kakao_login", nullable = false)
+    private Boolean isKakaoLogin;
 
     @Column(name = "kakao_id", unique = true)
     private String kakaoId;
 
-    @Column(length = 30, unique = true)
+    @Column(length = 20, unique = true)
     private String nickname;
 
     @Column(name = "birth_date")
@@ -42,8 +46,43 @@ public class User {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
+    @OneToMany(mappedBy = "userId")
+    private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userId")
+    private List<Comment> comments = new ArrayList<>();
+
     // 기본 생성자
-    public User() {}
+    protected User() {}
+
+    // 이메일 회원 가입용
+    public static User createByEmail(String name, String email, String password, String nickname, LocalDateTime birthDate, String introduction, String profileImgUrl) {
+        User user = new User();
+        user.name = name;
+        user.email = email;
+        user.password = password;
+        user.isKakaoLogin = false;
+        user.nickname = nickname;
+        user.birthDate = birthDate;
+        user.introduction = introduction;
+        user.profileImgUrl = profileImgUrl;
+        return user;
+    }
+
+    // 카카오 로그인용
+    public static User createByKakao(String kakaoId, String name, String email, String password, String nickname, LocalDateTime birthDate, String introduction, String profileImgUrl) {
+        User user = new User();
+        user.name = name;
+        user.email = email;
+        user.password = password;
+        user.isKakaoLogin = true;
+        user.kakaoId =  kakaoId;
+        user.nickname = nickname;
+        user.birthDate = birthDate;
+        user.introduction = introduction;
+        user.profileImgUrl = profileImgUrl;
+        return user;
+    }
 
     public Long getUserId() {
         return userId;
@@ -89,10 +128,6 @@ public class User {
         return updateDate;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -103,10 +138,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setKakaoId(String kakaoId) {
-        this.kakaoId = kakaoId;
     }
 
     public void setNickname(String nickname) {
@@ -125,11 +156,11 @@ public class User {
         this.profileImgUrl = profileImgUrl;
     }
 
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-    }
-
     public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public List<Post> getMyPosts() {
+        return posts;
     }
 }

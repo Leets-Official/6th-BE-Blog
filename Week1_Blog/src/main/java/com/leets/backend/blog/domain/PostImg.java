@@ -3,9 +3,9 @@ package com.leets.backend.blog.domain;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
+@Entity
+@Table(name = "postImgs") // DB 테이블명
 public class PostImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가
@@ -31,14 +31,12 @@ public class PostImg {
     private LocalDateTime updateDate;
 
     // 기본 생성자
-    public PostImg() {}
+    public PostImg() {
+
+    }
 
     public Long getImgId() {
         return imgId;
-    }
-
-    public void setImgId(Long imgId) {
-        this.imgId = imgId;
     }
 
     public String getPostId() {
@@ -49,11 +47,11 @@ public class PostImg {
         this.postId = postId;
     }
 
-    public Boolean getThumbnail() {
+    public Boolean getIsThumbnail() {
         return isThumbnail;
     }
 
-    public void setThumbnail(Boolean thumbnail) {
+    public void setIsThumbnail(Boolean thumbnail) {
         isThumbnail = thumbnail;
     }
 

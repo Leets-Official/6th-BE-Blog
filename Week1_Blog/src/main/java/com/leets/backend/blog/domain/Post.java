@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "posts") // DB 테이블명
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가
@@ -24,21 +26,17 @@ public class Post {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
-    @OneToMany(mappedBy = "userId")
-    private List<Post> posts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "userId")
+    @OneToMany(mappedBy = "postId")
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "postId")
+    private List<PostImg> postImgs = new ArrayList<>();
 
     // 기본 생성자
     public Post() {}
 
     public Long getPostId() {
         return postId;
-    }
-
-    public void setPostId(Long postId) {
-        this.postId = postId;
     }
 
     public String getUserId() {
@@ -69,10 +67,6 @@ public class Post {
         return createDate;
     }
 
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-    }
-
     public LocalDateTime getUpdateDate() {
         return updateDate;
     }
@@ -81,19 +75,7 @@ public class Post {
         this.updateDate = updateDate;
     }
 
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
-    }
-
     public List<Comment> getComments() {
         return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
     }
 }
