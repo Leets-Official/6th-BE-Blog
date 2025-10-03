@@ -12,7 +12,7 @@ public class Comment {
     private Long commentId;
 
     @Column(name = "post_id", nullable = false)
-    private String postId;
+    private Long postId;
 
     @Column(name = "user_id", nullable = false)
     private String userId;
@@ -28,15 +28,21 @@ public class Comment {
     // 기본 생성자
     public Comment() {}
 
+    public Comment(Long postId, String userId, String content) {
+        this.postId = postId;
+        this.userId = userId;
+        this.content = content;
+    }
+
     public Long getCommentId() {
         return commentId;
     }
 
-    public String getPostId() {
+    public Long getPostId() {
         return postId;
     }
 
-    public void setPostId(String postId) {
+    public void setPostId(Long postId) {
         this.postId = postId;
     }
 

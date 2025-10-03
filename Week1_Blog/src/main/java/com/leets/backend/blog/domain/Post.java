@@ -35,6 +35,12 @@ public class Post {
     // 기본 생성자
     public Post() {}
 
+    public Post(String userId, String title, String content) {
+        this.userId = userId;
+        this.title = title;
+        this.content = content;
+    }
+
     public Long getPostId() {
         return postId;
     }

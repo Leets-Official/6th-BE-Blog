@@ -13,10 +13,11 @@ public class PostImg {
     private Long imgId;
 
     @Column(name = "post_id", nullable = false)
-    private String postId;
+    private Long postId;
 
-    @Column(name = "is_thumbnail")
-    private Boolean isThumbnail;
+    // 썸네일 이미지는 sortOrder = 0 설정으로 변경
+    //@Column(name = "is_thumbnail")
+    //private Boolean isThumbnail;
 
     @Column(name = "img_url")
     private String imgUrl;
@@ -30,20 +31,21 @@ public class PostImg {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
-    // 기본 생성자
-    public PostImg() {
-
+    public PostImg(Long postId, String imgUrl, Integer sortOrder) {
+        this.postId = postId;
+        this.imgUrl = imgUrl;
+        this.sortOrder = sortOrder;
     }
 
     public Long getImgId() {
         return imgId;
     }
 
-    public String getPostId() {
+    public Long getPostId() {
         return postId;
     }
 
-    public void setPostId(String postId) {
+    public void setPostId(Long postId) {
         this.postId = postId;
     }
 
