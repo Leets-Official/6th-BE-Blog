@@ -13,8 +13,8 @@ public class PostImage {
     @Column(nullable = false)
     private String imageUrl;
 
-    @Column(name = "\"order\"") // 'order'는 SQL 예약어이므로 큰따옴표로 감싸줌
-    private Integer order;
+    @Column(name = "image_order")
+    private Integer imageOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
@@ -25,6 +25,6 @@ public class PostImage {
     // --- Getters ---
     public Long getId() { return id; }
     public String getImageUrl() { return imageUrl; }
-    public Integer getOrder() { return order; }
+    public Integer getImageOrder() { return imageOrder; }
     public Post getPost() { return post; }
 }
