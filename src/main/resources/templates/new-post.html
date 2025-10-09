@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>새 글 작성</title>
+    <style>
+        :root{--bg:#0f1115;--card:#171922;--muted:#9aa4b2;--fg:#eef2f7;--acc:#7aa2f7}
+        body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui}
+        .wrap{max-width:760px;margin:32px auto;padding:0 16px}
+        .title{font-size:24px;font-weight:800;margin-bottom:12px}
+        .card{background:var(--card);border:1px solid #232838;border-radius:16px;padding:20px}
+        label{display:block;margin:10px 0 6px;color:var(--muted)}
+        input[type=text], textarea{
+            width:100%;padding:12px 14px;border-radius:12px;border:1px solid #2a2f3a;background:#0f1320;color:var(--fg);
+        }
+        textarea{min-height:240px;resize:vertical}
+        .row{display:flex;gap:10px;margin-top:16px}
+        .btn{padding:10px 14px;border-radius:10px;border:1px solid #2a2f3a;background:#1b1f2a;color:var(--fg);text-decoration:none}
+        .btn:hover{border-color:var(--acc);box-shadow:0 0 0 3px #7aa2f3aa}
+        .btn.acc{background:linear-gradient(135deg,var(--acc),#9b8afc);border-color:transparent}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="title">새 글 작성</div>
+    <div class="card">
+        <form action="/post/new" method="post" th:object="${post}">
+            <label for="title">제목</label>
+            <input id="title" type="text" th:field="*{title}" required maxlength="100" placeholder="제목을 입력하세요"/>
+
+            <label for="content">내용</label>
+            <textarea id="content" th:field="*{content}" required placeholder="내용을 입력하세요"></textarea>
+
+            <div class="row">
+                <a class="btn" href="/posts">취소</a>
+                <button class="btn acc" type="submit">등록</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+
+
+
