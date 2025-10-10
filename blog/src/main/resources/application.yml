@@ -15,3 +15,12 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    api-docs-path: /v3/api-docs
+  info:
+    title: "Leets 6th 블로그 과제 API DOC"
+    version: "v1.0.0"
+    description: "게시물 CRUD 기능에 대한 API 명세서입니다."
