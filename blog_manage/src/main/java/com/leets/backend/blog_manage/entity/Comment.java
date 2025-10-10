@@ -1,26 +1,18 @@
-package com.leets.backend.blog_manage.model;
+package com.leets.backend.blog_manage.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "post")
-public class Post {
+@Table(name = "comment")
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
-
-    @Lob // TEXT 타입 매핑
-    @Column(nullable = false)
+    @Column(length = 500, nullable = false)
     private String content;
-
-    private String thumbnailUrl;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -31,20 +23,17 @@ public class Post {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "post")
-    private List<Comment> comments = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
-    @OneToMany(mappedBy = "post")
-    private List<PostImage> postImages = new ArrayList<>();
-
-    public Post() {}
+    public Comment() {}
 
     // --- Getters ---
     public Long getId() { return id; }
-    public String getTitle() { return title; }
     public String getContent() { return content; }
-    public String getThumbnailUrl() { return thumbnailUrl; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public User getUser() { return user; }
+    public Post getPost() { return post; }
 }
