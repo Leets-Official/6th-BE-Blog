@@ -1,4 +1,4 @@
-package com.leets.backend.blog.domain;
+package com.leets.backend.blog.entity;
 
 import jakarta.persistence.*;
 
@@ -48,6 +48,16 @@ public class User{
 
     public User() {}
 
+    // 회원가입 시 사용될 생성자
+    public User(String email, String password, String nickname, String loginType) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.loginType = loginType;
+        this.createdAt = LocalDateTime.now(); // 생성 시점 자동 설정
+        this.updatedAt = LocalDateTime.now(); // 업데이트 시점 자동 설정
+    }
+
     // Getter (Lombok 금지)
     public Long getUserId() { return userId; }
     public String getName() { return name; }
@@ -55,11 +65,41 @@ public class User{
     public String getPassword() { return password; }
     public String getNickname() { return nickname; }
     public LocalDate getBirthDate() { return birthDate; }
-    public String getIntroduction() { return intro; }
+    public String getIntro() { return intro; }
     public String getProfileUrl() { return profileUrl; }
     public String getLoginType() { return loginType; }
     public String getKakaoId() { return kakaoId; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
+    // Setters (필요한 경우에만 추가)
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    // 사용자 정보 업데이트 메서드
+    public void update(String nickname, String password, String profileUrl, LocalDateTime updatedAt) {
+        if (nickname != null && !nickname.isEmpty()) {
+            this.nickname = nickname;
+        }
+        if (password != null && !password.isEmpty()) {
+            this.password = password;
+        }
+        if (profileUrl != null) {
+            this.profileUrl = profileUrl;
+        }
+        this.updatedAt = updatedAt;
+    }
 }

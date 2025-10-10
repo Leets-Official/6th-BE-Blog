@@ -1,7 +1,7 @@
-package com.leets.backend.blog.domain;
+package com.leets.backend.blog.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,6 +28,20 @@ public class Post {
     private LocalDateTime updatedAt;
 
     public Post() {}
+
+    public Post(User user, String title, String content) {
+        this.user = user;
+        this.title = title;
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+        this.updatedAt = LocalDateTime.now();
+    }
 
     // Getter (Lombok 금지)
     public Long getPostId() { return postId; }
