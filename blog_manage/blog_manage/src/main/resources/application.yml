@@ -2,13 +2,18 @@ spring:
   application:
     name: blog
   datasource:
-    url: jdbc:mysql://localhost:3306/blog_db?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/blog_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true
     username: root
     password: 8637
   jpa:
     hibernate:
-      ddl-auto: update   # 개발 단계에서는 update / 운영은 validate 권장
+      ddl-auto: create   # 실행마다 DB 테이블 재생성
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
     show-sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always       # 항상 data.sql 실행
