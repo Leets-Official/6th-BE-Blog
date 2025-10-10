@@ -17,7 +17,6 @@ public class PostController {
 
     @GetMapping("/posts")       // 게시글 목록 조회(Read)
     public String listPosts(Model model) {
-        model.addAttribute("posts", postService.getAllPosts());
         return "posts";
     }
 
@@ -26,10 +25,9 @@ public class PostController {
         return "new-post";
     }
 
-    @PostMapping("/post")       // 새 게시글 생성(Create)
-    public String createPost(@RequestParam String title,
-                             @RequestParam String content) {
-        postService.createPost(title, content);
+    @PostMapping("/posts")       // 새 게시글 생성(Create)
+    public String createPost(@RequestParam("title") String title,
+                             @RequestParam("content") String content) {
         return "redirect:/posts";
     }
 }
