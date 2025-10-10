@@ -1,4 +1,4 @@
-package com.leets.backend.blog_manage.model;
+package com.leets.backend.blog_manage.entity; // 패키지 경로가 entity로 변경됨
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -8,7 +8,7 @@ import java.util.List;
 @Entity
 @Table(name = "post")
 public class Post {
-
+    // ... 필드 정의는 기존과 동일 ...
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,7 +16,7 @@ public class Post {
     @Column(nullable = false)
     private String title;
 
-    @Lob // TEXT 타입 매핑
+    @Lob
     @Column(nullable = false)
     private String content;
 
@@ -39,6 +39,21 @@ public class Post {
 
     public Post() {}
 
+    // DTO를 위한 생성자 추가
+    public Post(String title, String content, User user) {
+        this.title = title;
+        this.content = content;
+        this.user = user;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // 수정 편의 메소드 추가
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+        this.updatedAt = LocalDateTime.now();
+    }
+
     // --- Getters ---
     public Long getId() { return id; }
     public String getTitle() { return title; }
@@ -47,4 +62,5 @@ public class Post {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public User getUser() { return user; }
+    public List<Comment> getComments() { return comments; }
 }
