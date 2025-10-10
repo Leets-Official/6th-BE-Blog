@@ -1,9 +1,9 @@
 package com.leets.backend.blog_manage.repository;
 
-import com.leets.backend.blog_manage.model.Post;
+import com.leets.backend.blog_manage.model.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
 }
