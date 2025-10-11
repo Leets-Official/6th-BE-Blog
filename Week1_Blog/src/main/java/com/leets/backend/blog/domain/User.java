@@ -1,9 +1,8 @@
 package com.leets.backend.blog.domain;
 
+import com.leets.backend.blog.DTO.UserCreateRequestDTO;
 import com.leets.backend.blog.util.StringUtil;
 import jakarta.persistence.*;
-import org.springframework.cglib.core.Local;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.List;
 @Entity
 @Table(name = "users") // DB 테이블명
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가
     @Column(name = "user_id")
@@ -49,47 +47,35 @@ public class User {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
-    @OneToMany(mappedBy = "userId")
+    @OneToMany(mappedBy = "user")
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userId")
+    @OneToMany(mappedBy = "user")
     private List<Comment> comments = new ArrayList<>();
 
     // 기본 생성자
     protected User() {}
 
-    // 이메일 회원 가입용
-    public static User createByEmail(String name, String email, String password, String nickname, LocalDateTime birthDate, String introduction, String profileImgUrl) {
+    // 카카오 & 이메일 회원가입
+    public static User createUser(UserCreateRequestDTO dto){
         User user = new User();
-        user.name = name;
-        user.email = email;
-        user.password = password;
-        user.isKakaoLogin = false;
-        user.nickname = nickname;
-        user.birthDate = birthDate;
-        user.introduction = introduction;
-        user.profileImgUrl = profileImgUrl;
+        user.name = dto.getName();
+        user.email = dto.getEmail();
+        user.password = dto.getPassword();
+        user.isKakaoLogin = dto.getIsKakaoLogin();
+        user.kakaoId = dto.getIsKakaoLogin() ? dto.getKakaoId() : null;
+        user.nickname = dto.getNickname();
+        user.birthDate = dto.getBirthDate();
+        user.introduction = dto.getIntroduction();
+        user.profileImgUrl = dto.getProfileImgUrl();
+        user.createDate = LocalDateTime.now();
         return user;
     }
 
-    // 카카오 로그인용
-    public static User createByKakao(String kakaoId, String name, String email, String password, String nickname, LocalDateTime birthDate, String introduction, String profileImgUrl) {
-        User user = new User();
-        user.name = name;
-        user.email = email;
-        user.password = password;
-        user.isKakaoLogin = true;
-        user.kakaoId =  kakaoId;
-        user.nickname = nickname;
-        user.birthDate = birthDate;
-        user.introduction = introduction;
-        user.profileImgUrl = profileImgUrl;
-        return user;
-    }
-
-    public void updateUser(String nickname, String email, String introduction, String name, String birthDate){
+    public void updateUser(String nickname, String email, String password, String introduction, String name, String birthDate){
         this.nickname = StringUtil.isNullOrEmpty(nickname) ? this.nickname : nickname;
         this.email = StringUtil.isNullOrEmpty(email) ? this.email : email;
+        this.password = StringUtil.isNullOrEmpty(password) ? this.password : password;
         this.name = StringUtil.isNullOrEmpty(name) ? this.name : name;
         this.birthDate = StringUtil.isNullOrEmpty(birthDate) ? this.birthDate : LocalDateTime.parse(birthDate);;
         this.updateDate = LocalDateTime.now();
@@ -109,6 +95,10 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public Boolean getIsKakaoLogin() {
+        return  isKakaoLogin;
     }
 
     public String getKakaoId() {
@@ -137,38 +127,6 @@ public class User {
 
     public LocalDateTime getUpdateDate() {
         return updateDate;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void setBirthDate(LocalDateTime birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public void setIntroduction(String introduction) {
-        this.introduction = introduction;
-    }
-
-    public void setProfileImgUrl(String profileImgUrl) {
-        this.profileImgUrl = profileImgUrl;
-    }
-
-    public void setUpdateDate(LocalDateTime updateDate) {
-        this.updateDate = updateDate;
     }
 
     public List<Post> getMyPosts() {

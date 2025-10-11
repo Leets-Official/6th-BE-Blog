@@ -1,7 +1,10 @@
 package com.leets.backend.blog.domain;
 
+import com.leets.backend.blog.DTO.CommentRequestDTO;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "comments") // DB 테이블명
@@ -11,11 +14,13 @@ public class Comment {
     @Column(name = "comment_id")
     private Long commentId;
 
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
+    // 부모 댓글 ID (FK)
+    @Column(name = "parent_comment_id")
+    private Long parentCommentId;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "parent_comment_id") // FK 컬럼
+    private List<Comment> childComments = new ArrayList<>();
 
     private String content;
 
@@ -25,17 +30,42 @@ public class Comment {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     // 기본 생성자
     public Comment() {}
 
-    public Comment(Long postId, String userId, String content) {
-        this.postId = postId;
-        this.userId = userId;
-        this.content = content;
+    public static Comment createComment(Post post, User user, CommentRequestDTO dto) {
+        Comment comment = new Comment();
+
+        comment.post = post;
+        comment.user = user;
+        comment.content = dto.getContent();
+        comment.createDate = LocalDateTime.now();
+
+        return comment;
     }
 
-    public void updateComment(String conetent) {
-        this.content = conetent;
+    public static Comment createChildComment(Post post, User user, Long parentCommentId, CommentRequestDTO dto) {
+        Comment comment = new Comment();
+
+        comment.post = post;
+        comment.user = user;
+        comment.parentCommentId = parentCommentId;
+        comment.content = dto.getContent();
+        comment.createDate = LocalDateTime.now();
+
+        return comment;
+    }
+
+    public void updateComment(String content) {
+        this.content = content;
         this.updateDate = LocalDateTime.now();
     }
 
@@ -43,43 +73,27 @@ public class Comment {
         return commentId;
     }
 
-    public Long getPostId() {
-        return postId;
-    }
-
-    public void setPostId(Long postId) {
-        this.postId = postId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getContent() {
         return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-    }
-
     public LocalDateTime getUpdateDate() {
         return updateDate;
     }
 
-    public void setUpdateDate(LocalDateTime updateDate) {
-        this.updateDate = updateDate;
+    public Long getParentCommentId() {
+        return parentCommentId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Post getPost() {
+        return post;
     }
 }
