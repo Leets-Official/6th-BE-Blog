@@ -1,5 +1,6 @@
 package com.leets.backend.blog.domain;
 
+import com.leets.backend.blog.DTO.PostRequestDTO;
 import com.leets.backend.blog.util.StringUtil;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -14,11 +15,14 @@ public class Post {
     @Column(name = "post_id")
     private Long postId;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     private String title;
 
+    // 게시물 내용을 HTML 소스 자체로 저장(이미지도 img태그로 저장)
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 
     @Column(name = "create_date", nullable = false)
@@ -27,19 +31,20 @@ public class Post {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
-    @OneToMany(mappedBy = "postId")
+    @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "postId")
-    private List<PostImg> postImgs = new ArrayList<>();
 
     // 기본 생성자
     public Post() {}
 
-    public Post(String userId, String title, String content) {
-        this.userId = userId;
-        this.title = title;
-        this.content = content;
+    public static Post createPost(PostRequestDTO dto, User user) {
+        Post post = new Post();
+        post.title = dto.getTitle();
+        post.content = dto.getContent();
+        post.createDate = LocalDateTime.now();
+        post.user = user;
+
+        return post;
     }
 
     public void updatePost(String title, String content){
@@ -52,28 +57,12 @@ public class Post {
         return postId;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContent() {
         return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public LocalDateTime getCreateDate() {
@@ -84,11 +73,11 @@ public class Post {
         return updateDate;
     }
 
-    public void setUpdateDate(LocalDateTime updateDate) {
-        this.updateDate = updateDate;
-    }
-
     public List<Comment> getComments() {
         return comments;
+    }
+
+    public User getUser() {
+        return user;
     }
 }
