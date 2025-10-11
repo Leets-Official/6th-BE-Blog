@@ -1,9 +1,9 @@
 package com.leets.backend.blog.repository;
 
+import com.leets.backend.blog.entity.PostImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.leets.backend.blog.entity.Post;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface PostImageRepository extends JpaRepository<PostImage, Long> {
 }
