@@ -1,14 +1,16 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;MODE=MySQL
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mysql://127.0.0.1:3306/blog?serverTimezone=Asia/Seoul&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
     show-sql: true
-  thymeleaf:
-    cache: false
+
 server:
   port: 8080
