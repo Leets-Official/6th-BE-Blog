@@ -1,7 +1,7 @@
 package com.leets.backend.blog.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comment")
@@ -16,7 +16,7 @@ public class Comment {
     private String content;
 
     @Column(nullable = false)
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -33,7 +33,7 @@ public class Comment {
     public String getContent() {
         return content;
     }
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
     public User getUser() {

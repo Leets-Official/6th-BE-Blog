@@ -9,11 +9,11 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "postId")
     private Long postId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
     @Column(name = "title", nullable = false)
@@ -27,6 +27,27 @@ public class Post {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public Post(){}
+    public Post(User user, String title, String content) {
+        this.user = user;
+        this.title = title;
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updatePost(String title, String content) {
+        if(title != null) {
+            this.title = title;
+        }
+        if(content != null) {
+            this.content = content;
+        }
+        if(title != null || content != null) {
+            this.updatedAt = LocalDateTime.now();
+        }
+    }
 
     // Getters
     public Long getPostId() {
