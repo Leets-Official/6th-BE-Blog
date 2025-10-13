@@ -1,4 +1,4 @@
-package com.leets.backend.blog.model;
+package com.leets.backend.blog.entity;
 
 import jakarta.persistence.*;
         import java.time.LocalDateTime;
@@ -20,7 +20,6 @@ public class RefreshToken {
 
     private Boolean revoked = false;
     private LocalDateTime expiresAt;
-
 
 
     // 기본 생성자

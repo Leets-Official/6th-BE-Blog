@@ -1,37 +1,59 @@
 package com.leets.backend.blog.controller;
 
-import com.leets.backend.blog.model.Post;
+import com.leets.backend.blog.dto.PostRequestDTO;
+import com.leets.backend.blog.dto.PostResponseDTO;
 import com.leets.backend.blog.service.PostService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/posts")
 public class PostController {
 
-    private final PostService postService = new PostService();
+    private final PostService postService;
 
-    @GetMapping("/post")
-    public String getAllPosts(Model model) {
-        return "postList"; // postList.html 템플릿을 렌더링
+    public PostController(PostService postService) {
+        this.postService = postService;
     }
 
-    @GetMapping("/post/new")
-    public String newPostForm() {
-        return "postForm"; // postForm.html 템플릿을 렌더링 (게시글 작성 폼)
+    // 게시글 생성 /posts
+    @PostMapping
+    public ResponseEntity<PostResponseDTO> createPost(@Valid @RequestBody PostRequestDTO dto) {
+        PostResponseDTO response = postService.createPost(dto);
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/post/new")
-    public String createPost(@RequestParam String title, @RequestParam String content) {
-        return "redirect:/posts"; // 게시글 작성 후 목록 페이지로 리다이렉트
+    // 게시글 전체 조회 /posts
+    @GetMapping
+    public ResponseEntity<List<PostResponseDTO>> getAllPosts() {
+        List<PostResponseDTO> posts = postService.getAllPosts();
+        return ResponseEntity.ok(posts);
     }
 
-    @GetMapping("/post/{id}")
-    public ModelAndView getPostById(@PathVariable Long id) {
-        ModelAndView mav = new ModelAndView("postDetail"); // postDetail.html 템플릿을 렌더링
-        return mav;
+    //게시글 상세 조회 /posts/{id}
+    @GetMapping("/{id}")
+    public ResponseEntity<PostResponseDTO> getPostById(@PathVariable Long id) {
+        PostResponseDTO response = postService.getPostById(id);
+        return ResponseEntity.ok(response);
+    }
+
+    //게시글 수정 /posts/{id}
+    @PutMapping("/{id}")
+    public ResponseEntity<PostResponseDTO> updatePost(
+            @PathVariable Long id,
+            @Valid @RequestBody PostRequestDTO dto
+    ) {
+        PostResponseDTO response = postService.updatePost(id, dto);
+        return ResponseEntity.ok(response);
+    }
+
+    //게시글 삭제 /posts/{id}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePost(@PathVariable Long id) {
+        postService.deletePost(id);
+        return ResponseEntity.ok("게시글이 삭제되었습니다.");
     }
 }

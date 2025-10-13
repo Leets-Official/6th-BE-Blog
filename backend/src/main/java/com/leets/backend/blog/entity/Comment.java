@@ -1,4 +1,4 @@
-package com.leets.backend.blog.model;
+package com.leets.backend.blog.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

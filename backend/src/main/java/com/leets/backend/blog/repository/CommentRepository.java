@@ -1,8 +1,8 @@
 package com.leets.backend.blog.repository;
 
-import org.hibernate.annotations.Comments;
+import com.leets.backend.blog.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface CommentRepository extends JpaRepository<Comments, Integer> {
+public interface CommentRepository extends JpaRepository<Comment, Integer> {
 }
