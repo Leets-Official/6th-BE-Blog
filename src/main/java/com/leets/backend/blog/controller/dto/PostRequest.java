@@ -4,12 +4,12 @@ public class PostRequest {
     private String title;
     private String content;
 
-    public PostRequest() {}                 // 기본 생성자
+    public PostRequest() {}
 
-    public String getTitle() {              // getter
+    public String getTitle() {
         return title;
     }
-    public void setTitle(String title) {    // setter
+    public void setTitle(String title) {
         this.title = title;
     }
     public String getContent() {

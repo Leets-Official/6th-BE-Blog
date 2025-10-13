@@ -15,23 +15,21 @@ public class PostController {
         this.postService = postService;
     }
 
-    // 새 글 작성 화면 띄우기
-    @GetMapping("/post/new")
-    public String newPostForm() {
-        return "new-post"; // templates/new-post.html
-    }
-
-    // 새 글 저장 처리
-    @PostMapping("/post/new")
-    public String createNewPost(@ModelAttribute PostRequest request) {
-        postService.save(request);
-        return "redirect:/posts"; // 저장 후 목록으로 이동
-    }
-
-    // 글 목록 보기
+    // 게시글 목록 조회
     @GetMapping("/posts")
     public String getPosts(Model model) {
-        model.addAttribute("posts", postService.findAll());
-        return "posts"; // templates/posts.html
+        model.addAttribute("posts", null);
+        return "posts";
+    }
+
+    // 게시글 저장
+    @GetMapping("/post/new")
+    public String newPostForm() {
+        return "new-post";
+    }
+
+    @PostMapping("/post/new")
+    public String createNewPost(@ModelAttribute PostRequest request) {
+        return "redirect:/posts";
     }
 }
