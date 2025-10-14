@@ -1,18 +1,19 @@
 package leets.blogapplication.domain;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "refresh_tokens")
 public class RefreshToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long refreshTokenId;
 
     @Column(nullable = false)
-    private String token;
+    private String refreshToken;
 
     @Column
     private LocalDateTime expiresAt;
@@ -28,19 +29,18 @@ public class RefreshToken {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-    public void setRevoked(boolean revoked) {
-        this.revoked = revoked;
-    }
+    public void setUser(User user) { this.user = user; }
+    public void setRevoked(boolean revoked) { this.revoked = revoked; }
 
     public RefreshToken(String token, LocalDateTime expiresAt, LocalDateTime issuedAt, boolean revoked) {
-        this.token = token;
+        this.refreshToken = token;
         this.expiresAt = expiresAt;
         this.issuedAt = issuedAt;
         this.revoked = revoked;
     }
 
     protected RefreshToken() {}
+
+    public Long getUserId() { return user.getId();
+    }
 }
