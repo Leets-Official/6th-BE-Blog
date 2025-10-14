@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>새 게시물 작성</title>
+</head>
+<body>
+<h1>새 게시물 작성</h1>
+<!-- 이 HTML은 API 테스트를 위한 것이 아니며, Thymeleaf 등과 연동 시 사용될 수 있는 뼈대 파일입니다. -->
+<form action="/posts" method="post">
+    <div>
+        <label for="title">제목:</label>
+        <input type="text" id="title" name="title">
+    </div>
+    <div>
+        <label for="content">내용:</label>
+        <textarea id="content" name="content"></textarea>
+    </div>
+    <button type="submit">작성</button>
+</form>
+</body>
+</html>
