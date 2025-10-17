@@ -1,4 +1,4 @@
-package com.leets.backend.blog.domain;
+package com.leets.backend.blog.entity;
 
 import jakarta.persistence.*;
 
