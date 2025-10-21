@@ -12,7 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
-import leets.blogapplication.service.TokenService;
+import leets.blogapplication.service.auth.TokenService;
 
 import java.io.IOException;
 
