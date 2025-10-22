@@ -23,7 +23,9 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-    public PostController(PostService postService) { this.postService = postService; }
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
 
     // 전체 조회
     @GetMapping("/posts")
