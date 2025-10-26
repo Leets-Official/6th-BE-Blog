@@ -29,14 +29,30 @@ public class GlobalExceptionHandler {
         });
 
         return new ResponseEntity<>(
-                ApiResponse.onFailure(HttpStatus.BAD_REQUEST, "요청 데이터 유효성 검증 실패"),
+                ApiResponse.onFailure(HttpStatus.BAD_REQUEST, "요청 데이터 유효성 검증 실패", errors),
                 HttpStatus.BAD_REQUEST
+        );
+    }
+
+    // 403 Forbidden
+    @ExceptionHandler(CommentAccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCommentAccessDeniedException(CommentAccessDeniedException exception) {
+        return new ResponseEntity<>(
+                ApiResponse.onFailure(HttpStatus.FORBIDDEN, exception.getMessage()),
+                HttpStatus.FORBIDDEN
         );
     }
 
     // 404 Not Found
     @ExceptionHandler(PostNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handlePostNotFoundException(PostNotFoundException exception) {
+        return new ResponseEntity<>(
+                ApiResponse.onFailure(HttpStatus.NOT_FOUND, exception.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
+    }
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCommentNotFoundException(CommentNotFoundException exception) {
         return new ResponseEntity<>(
                 ApiResponse.onFailure(HttpStatus.NOT_FOUND, exception.getMessage()),
                 HttpStatus.NOT_FOUND

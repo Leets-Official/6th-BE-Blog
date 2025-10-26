@@ -32,9 +32,14 @@ public class ApiResponse<T> {
         return new ApiResponse<>(status.value(), message, data);
     }
 
-    // 실패 응답
+    // 실패 응답 - 응답 데이터 미포함
     public static <T> ApiResponse<T> onFailure(HttpStatus status, String message) {
         return new ApiResponse<>(status.value(), message, null);
+    }
+
+    // 실패 응답 - 응답 데이터 포함
+    public static <T> ApiResponse<T> onFailure(HttpStatus status, String message, T data) {
+        return new ApiResponse<>(status.value(), message, data);
     }
 
     // getters

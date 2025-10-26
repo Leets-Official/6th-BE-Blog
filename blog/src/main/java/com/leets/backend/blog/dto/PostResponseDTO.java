@@ -5,7 +5,7 @@ import com.leets.backend.blog.entity.Post;
 import java.time.LocalDateTime;
 
 public class PostResponseDTO {
-    private Long post_id;
+    private Long postId;
     private String title;
     private String content;
     private String nickname;
@@ -19,7 +19,7 @@ public class PostResponseDTO {
     // Post 엔티티 -> DTO 변환 메서드
     public static PostResponseDTO from(Post post) {
         PostResponseDTO responseDTO = new PostResponseDTO();
-        responseDTO.post_id = post.getPostId();
+        responseDTO.postId = post.getPostId();
         responseDTO.title = post.getTitle();
         responseDTO.content = post.getContent();
         responseDTO.nickname = post.getUser().getNickname();
@@ -30,8 +30,8 @@ public class PostResponseDTO {
     }
 
     // getters
-    public Long getPost_id() {
-        return post_id;
+    public Long getPostId() {
+        return postId;
     }
 
     public String getTitle() { return title; }

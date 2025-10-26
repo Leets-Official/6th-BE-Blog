@@ -1,16 +1,12 @@
 package com.leets.backend.blog.service;
 
-import com.leets.backend.blog.dto.PostCreateRequestDTO;
-import com.leets.backend.blog.dto.PostResponseDTO;
-import com.leets.backend.blog.dto.PostUpdateRequestDTO;
+import com.leets.backend.blog.dto.*;
 import com.leets.backend.blog.entity.Post;
 import com.leets.backend.blog.entity.User;
 import com.leets.backend.blog.exception.PostNotFoundException;
 import com.leets.backend.blog.repository.PostRepository;
 import com.leets.backend.blog.repository.UserRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class PostService {
 
     private final PostRepository postRepository;
@@ -32,7 +29,6 @@ public class PostService {
     }
 
     // 게시물 생성
-    @Transactional
     public PostResponseDTO createPost(PostCreateRequestDTO requestDTO) {
 
         User user = findDummyUser();
@@ -46,33 +42,30 @@ public class PostService {
 
     // 게시물 상세 조회
     @Transactional(readOnly = true)
-    public PostResponseDTO getPostDetail(Long postId) {
+    public PostDetailResponseDTO getPostDetail(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
-        return PostResponseDTO.from(post);
+        User loginUser = findDummyUser();
+
+        return PostDetailResponseDTO.from(post, loginUser);
     }
 
     // 게시물 목록 조회
     @Transactional(readOnly = true)
-    public Page<PostResponseDTO> getPostList(int page) {
+    public List<PostListResponseDTO> getPostList(int page) {
 
-        // offset 계산
-        int offset = page * PAGE_SIZE;
+        // 1. Pageable 객체 생성 (page는 0부터 시작, 정렬 기준: createdAt 내림차순)
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        List<Post> posts = postRepository.findPostsWithPaging(offset, PAGE_SIZE);
+        // 2. DTO 프로젝션을 사용한 메서드 호출
+        Page<PostListResponseDTO> postPage = postRepository.findAllAsListDTO(pageable);
 
-        long totalCount = postRepository.countAllPosts();
-
-        List<PostResponseDTO> dtoList = posts.stream()
-                .map(PostResponseDTO::from)
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(dtoList, PageRequest.of(page, PAGE_SIZE), totalCount);
+        // 3. Page<DTO>에서 List<DTO>를 반환
+        return postPage.getContent();
     }
 
     // 게시물 수정
-    @Transactional
     public PostResponseDTO updatePost(Long postId, PostUpdateRequestDTO requestDTO) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
@@ -83,7 +76,6 @@ public class PostService {
     }
 
     // 게시물 삭제
-    @Transactional
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));

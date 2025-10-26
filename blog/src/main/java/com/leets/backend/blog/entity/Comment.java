@@ -22,6 +22,31 @@ public class Comment {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+    public Comment() { }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // 생성 메서드
+    public static Comment createComment(String content, User user, Post post) {
+        Comment comment = new Comment();
+
+        comment.content = content;
+        comment.user = user;
+        comment.post = post;
+
+        return comment;
+    }
+
+    // 수정 메서드
+    public void updateComment(String content) {
+        if(content != null) {
+            this.content = content;
+        }
+    }
+
     //Getters
     public Long getCommentId() {
         return commentId;
