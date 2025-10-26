@@ -2,7 +2,6 @@ package com.leets.backend.blog.entity;
 
 import com.leets.backend.blog.enums.LoginMethod;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -34,6 +33,20 @@ public class User {
     private LocalDateTime createdAt;
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    public User() {}
+
+    public User createDummy() {
+        User user = new User();
+        user.email = "dummy@naver.com";
+        user.name = "김더미";
+        user.nickname = "더미다";
+        user.loginMethod = LoginMethod.KAKAO;
+        user.createdAt = LocalDateTime.now();
+        user.updatedAt = LocalDateTime.now();
+
+        return user;
+    }
 
     //Getters
     public Long getUserId() {
