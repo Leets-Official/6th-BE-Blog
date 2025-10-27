@@ -29,6 +29,19 @@ public class Comment {
 
     public Comment() {}
 
+    public Comment(String content, User user, Post post) {
+        this.content = content;
+        this.user = user;
+        this.post = post;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public void update(String content) {
+        this.content = content;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+
     // --- Getters ---
     public Long getId() { return id; }
     public String getContent() { return content; }
