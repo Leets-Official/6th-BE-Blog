@@ -1,12 +1,22 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/leets_blog?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/leetsblog?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true
     username: root
     password: 1111
-jpa:
-  hibernate:
-    ddl-auto: update
-  properties:
+  jpa:
     hibernate:
-      format_sql: true
-  show-sql: true
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+    show-sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+
+    logging:
+      level:
+        org.springframework.web: DEBUG
+        org.springframework.http.converter: DEBUG
