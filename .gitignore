@@ -1,0 +1,47 @@
+# Gradle
+.gradle/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.settings
+.classpath
+
+# Java
+*.class
+
+# Logs & temp
+*.log
+log/
+temp/
+
+# IDE files
+.idea/
+
+# Spring Boot
+/target/
+/classes/
+
+# Maven (혹시 프로젝트 혼합 사용 대비)
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Output
+/out/

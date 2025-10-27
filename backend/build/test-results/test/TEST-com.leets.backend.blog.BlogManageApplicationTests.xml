@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.leets.backend.blog.BlogManageApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-09-29T14:08:19.338Z" hostname="Yoojungs-MacBook-Air.local" time="0.304">
+  <properties/>
+  <testcase name="contextLoads()" classname="com.leets.backend.blog.BlogManageApplicationTests" time="0.304"/>
+  <system-out><![CDATA[23:08:18.660 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.leets.backend.blog.BlogManageApplicationTests]: BlogManageApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+23:08:18.690 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.leets.backend.blog.BlogApplication for test class com.leets.backend.blog.BlogManageApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.6)
+
+2025-09-29T23:08:18.809+09:00  INFO 54025 --- [backend] [    Test worker] c.l.b.blog.BlogManageApplicationTests    : Starting BlogManageApplicationTests using Java 21.0.6 with PID 54025 (started by yoojung in /Users/yoojung/6th-BE-Blog/backend)
+2025-09-29T23:08:18.810+09:00  INFO 54025 --- [backend] [    Test worker] c.l.b.blog.BlogManageApplicationTests    : No active profile set, falling back to 1 default profile: "default"
+2025-09-29T23:08:19.279+09:00  INFO 54025 --- [backend] [    Test worker] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2025-09-29T23:08:19.305+09:00  INFO 54025 --- [backend] [    Test worker] c.l.b.blog.BlogManageApplicationTests    : Started BlogManageApplicationTests in 0.579 seconds (process running for 0.926)
+]]></system-out>
+  <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (/Users/yoojung/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.17.7/fbf3d6d649ed37fc9e9c59480a05be0a26e3c2da/byte-buddy-agent-1.17.7.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+</testsuite>
