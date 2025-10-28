@@ -1,4 +1,4 @@
-package com.leets.backend.blog;
+package com.leets.backend.blog_manage.blog;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,4 +11,4 @@ class BlogManageApplicationTests {
     }
 
 }
-//주석
+
