@@ -1,20 +1,14 @@
 package leets.blogapplication.repository;
 
+import leets.blogapplication.controller.PostController;
 import leets.blogapplication.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PostRepository extends JpaRepository<Post, Long> {
-//    // C
-//    PostM create(PostM post);
-//    // R(전체)
-//    List<PostM> findAll();
-//    //R (상세)
-//    Optional<PostM> findById(String id);
-//    //U
-//    PostM update(String id, PostM post);
-//    //D
-//    void delete(String id);
-//    //검색
-//    List<PostM> findByTitle(String title);
+import java.util.List;
+import java.util.Optional;
 
+public interface PostRepository extends JpaRepository<Post, Long> {
+
+    List<Post> findByTitle(String title);
+    //얘네들 내가 의도한 대로 작동하는지 확인 한 번만 하기
 }

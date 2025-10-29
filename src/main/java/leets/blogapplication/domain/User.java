@@ -3,15 +3,18 @@ package leets.blogapplication.domain;
 import jakarta.persistence.*;
 import leets.blogapplication.domain.enums.Provider;
 import leets.blogapplication.domain.enums.UserStatus;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User{
+public class User implements UserDetails {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -64,9 +67,9 @@ public class User{
         ref.setRevoked(false);
     }
 
-    public static void createKakao(UserStatus status, String email, String name, LocalDate birthdate,
-                String nickname, String intro, String profileImage, Provider provider,
-                String providerUserId) {
+    public static User createKakao(UserStatus status, String email, String name, LocalDate birthdate,
+                                   String nickname, String intro, String profileImage, Provider provider,
+                                   String providerUserId) {
         User user = new User();
         user.status = UserStatus.ACTIVE;
         user.email = email;
@@ -78,9 +81,10 @@ public class User{
         user.provider = Provider.KAKAO;
         user.createdAt = LocalDateTime.now();
         user.providerUserId = providerUserId;
+        return user;
     }
 
-    public static void createEmail(UserStatus status, String email, String name, LocalDate birthdate,
+    public static User createEmail(UserStatus status, String email, String name, LocalDate birthdate,
                                    String nickname, String intro, String profileImage,
                                    Provider provider, String passwordHash) {
         User user = new User();
@@ -94,10 +98,11 @@ public class User{
         user.provider = Provider.EMAIL;
         user.createdAt = LocalDateTime.now();
         user.passwordHash = passwordHash;
+        return user;
     }
 
     public void updateEmailUser(String nickname, String intro, String email, String passwordHash, String name,
-                           LocalDate birthdate) {
+                                LocalDate birthdate) {
         this.nickname = nickname;
         this.intro = intro;
         this.email = email;
@@ -111,4 +116,28 @@ public class User{
     //카카오는 대체 뭘 변경한다는 건지 모르겟어서 일단 주석처리 했습니다
 
     protected User () {}
+
+    // ====== 접근자 ======
+    public Long getId() { return id; }
+    public List<Post> getPosts() { return posts; }
+    public List<Comment> getComments() { return comments; }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getPassword() {
+        return "";
+    }
+
+    @Override
+    public String getUsername() {
+        return "";
+    }
+
+    public String getEmail() { return email;
+    }
 }
+
