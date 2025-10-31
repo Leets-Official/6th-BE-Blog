@@ -53,7 +53,7 @@ public class CommentService {
                 .orElseThrow(() -> new CommentNotFoundException());
 
         // 해당 게시글의 댓글이 맞는지 점검
-        if(!comment.getPost().equals(post)){
+        if(!comment.getPost().getPostId().equals(post.getPostId())){
             throw new CommentNotFoundException(commentId, postId);
         }
 
@@ -76,7 +76,7 @@ public class CommentService {
                 .orElseThrow(() -> new CommentNotFoundException());
 
         // 해당 게시글의 댓글이 맞는지 점검
-        if(!comment.getPost().equals(post)){
+        if(!comment.getPost().getPostId().equals(post.getPostId())){
             throw new CommentNotFoundException(commentId, postId);
         }
 
