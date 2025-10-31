@@ -3,7 +3,6 @@ package com.leets.backend.blog.dto;
 public class PostUpdateRequestDTO {
 
     private String title;
-
     private String content;
 
     public PostUpdateRequestDTO() {}
