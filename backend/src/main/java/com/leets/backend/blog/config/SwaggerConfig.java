@@ -36,7 +36,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .components(new Components()
                         .addSecuritySchemes("BearerAuth",
-                                new io.swagger.v3.oas.models.security.SecurityScheme()  // 👈 여기를 풀패스로 작성
+                                new io.swagger.v3.oas.models.security.SecurityScheme()
                                         .name("BearerAuth")
                                         .type(io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
