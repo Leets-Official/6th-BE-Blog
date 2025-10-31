@@ -11,7 +11,6 @@ import com.leets.backend.blog_manage.exception.ErrorCode;
 import com.leets.backend.blog_manage.repository.CommentRepository;
 import com.leets.backend.blog_manage.repository.PostRepository;
 import com.leets.backend.blog_manage.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -23,7 +22,6 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    @Autowired
     public CommentService(CommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;

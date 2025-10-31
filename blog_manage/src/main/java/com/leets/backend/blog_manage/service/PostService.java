@@ -9,7 +9,6 @@ import com.leets.backend.blog_manage.exception.CustomException;
 import com.leets.backend.blog_manage.exception.ErrorCode;
 import com.leets.backend.blog_manage.repository.PostRepository;
 import com.leets.backend.blog_manage.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    @Autowired
     public PostService(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
