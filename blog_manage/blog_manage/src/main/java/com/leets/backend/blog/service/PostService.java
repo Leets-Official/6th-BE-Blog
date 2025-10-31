@@ -5,15 +5,17 @@ import com.leets.backend.blog.entity.User;
 import com.leets.backend.blog.dto.PostCreateRequest;
 import com.leets.backend.blog.dto.PostUpdateRequest;
 import com.leets.backend.blog.exception.PostNotFoundException;
+import com.leets.backend.blog.exception.UserAccessDeniedException;
 import com.leets.backend.blog.repository.PostRepository;
 import com.leets.backend.blog.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
-@Transactional(readOnly = true)     // 이 클래스의 메서드들은 기본적으로 데이터를 읽기만 함
+@Transactional(readOnly = true)
 public class PostService {
 
     private final PostRepository postRepository;
@@ -24,13 +26,9 @@ public class PostService {
         this.userRepository = userRepository;
     }
 
-    @Transactional      // 해당 메서드는 readOnly가 아님을 알려줌, 메서드 실패 시 Rollback
-    public Post createPost(PostCreateRequest request) {
-        // ToDo: 인증 기능 추가 후 실제 사용자 정보로 변경해야 함
-        // 임시로 ID가 1인 사용자가 모든 작업 수행한다고 가정
-        User temporaryUser = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("임시 사용자를 찾을 수 없습니다."));
-
-        Post post = new Post(temporaryUser, request.getTitle(), request.getContent());
+    @Transactional
+    public Post createPost(PostCreateRequest request, User user) {
+        Post post = new Post(user, request.getTitle(), request.getContent());
         return postRepository.save(post);
     }
 
@@ -40,25 +38,25 @@ public class PostService {
 
     public Post findPostById(Long postId) {
         return postRepository.findById(postId)
-                .orElseThrow(PostNotFoundException::new);
+                .orElseThrow(() -> new PostNotFoundException(postId));
     }
 
     @Transactional
-    public Post updatePost(Long postId, PostUpdateRequest request) {
+    public Post updatePost(Long postId, PostUpdateRequest request, User user) {
         Post post = findPostById(postId);
-
-        // TODO: 사용자 인증 기능 추가 후, 게시글 작성자 본인인지 확인하는 로직 필요
-
+        if (!Objects.equals(post.getUser().getUserId(), user.getUserId())) {
+            throw new UserAccessDeniedException("이 글을 수정할 권한이 없습니다. 작성자만 수정할 수 있습니다.");
+        }
         post.update(request.getTitle(), request.getContent());
         return post;
     }
 
     @Transactional
-    public void deletePost(Long postId) {
+    public void deletePost(Long postId, User user) {
         Post post = findPostById(postId);
-
-        // TODO: 사용자 인증 기능 추가 후, 게시글 작성자 본인인지 확인하는 로직 필요
-
+        if (!Objects.equals(post.getUser().getUserId(), user.getUserId())) {
+            throw new UserAccessDeniedException("이 글을 삭제할 권한이 없습니다. 작성자만 삭제할 수 있습니다.");
+        }
         postRepository.delete(post);
     }
 }

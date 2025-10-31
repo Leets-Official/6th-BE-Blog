@@ -4,17 +4,19 @@ import com.leets.backend.blog.entity.Post;
 
 import java.time.LocalDateTime;
 
-public class PostResponse {
+public class PostDetailResponse {
     private final Long id;
     private final String title;
     private final String content;
+    private final String authorNickname;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public PostResponse(Post post) {
+    public PostDetailResponse(Post post) {
         this.id = post.getPostId();
         this.title = post.getTitle();
         this.content = post.getContent();
+        this.authorNickname = post.getUser().getNickname();
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
     }
@@ -29,6 +31,10 @@ public class PostResponse {
 
     public String getContent() {
         return content;
+    }
+
+    public String getAuthorNickname() {
+        return authorNickname;
     }
 
     public LocalDateTime getCreatedAt() {

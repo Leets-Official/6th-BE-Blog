@@ -33,6 +33,19 @@ public class Comment {
     // JPA 필수: 기본 생성자
     public Comment() {}
 
+    public Comment(Post post, User user, String content) {
+        this.post = post;
+        this.user = user;
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void update(String content) {
+        this.content = content;
+        this.updatedAt = LocalDateTime.now();
+    }
+
     // Getter (Lombok 금지)
     public Long getCommentId() { return commentId; }
     public Post getPost() { return post; }

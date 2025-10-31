@@ -1,12 +1,15 @@
 package com.leets.backend.blog.controller;
 
 import com.leets.backend.blog.common.dto.ApiResponse;
+import com.leets.backend.blog.config.CustomUserDetails;
 import com.leets.backend.blog.dto.UserResponse;
 import com.leets.backend.blog.dto.UserUpdateRequest;
 import com.leets.backend.blog.entity.User;
+import com.leets.backend.blog.exception.UserAccessDeniedException;
 import com.leets.backend.blog.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,8 +30,12 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest request) {
-        // TODO: 현재 로그인한 사용자와 id가 일치하는지 확인하는 로직 필요
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable Long id, 
+                                                              @Valid @RequestBody UserUpdateRequest request,
+                                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (!userDetails.getUser().getUserId().equals(id)) {
+            throw new UserAccessDeniedException("이 사용자를 업데이트 할 권한이 없습니다.");
+        }
         User updatedUser = userService.updateUser(id, request);
         UserResponse userResponse = new UserResponse(updatedUser);
         return ResponseEntity.ok(ApiResponse.success(userResponse));

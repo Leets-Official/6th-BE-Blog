@@ -1,5 +1,6 @@
 package com.leets.backend.blog.service;
 
+import com.leets.backend.blog.config.JwtTokenProvider;
 import com.leets.backend.blog.dto.UserLoginRequest;
 import com.leets.backend.blog.dto.UserSignUpRequest;
 import com.leets.backend.blog.entity.User;
@@ -7,6 +8,10 @@ import com.leets.backend.blog.exception.BadCredentialsException;
 import com.leets.backend.blog.exception.DuplicateEmailException;
 import com.leets.backend.blog.exception.DuplicateNicknameException;
 import com.leets.backend.blog.repository.UserRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +24,14 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Transactional
@@ -53,15 +62,14 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public User login(UserLoginRequest request) {
-        // 1. 이메일로 사용자 찾기
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(BadCredentialsException::new);
+        // Spring Security의 AuthenticationManager를 사용하여 인증
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 2. 비밀번호 일치 여부 확인
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException();
-        }
-
-        return user;
+        // 기존 로직 유지 (AuthenticationManager가 이미 인증을 처리했으므로 비밀번호 검증은 필요 없음)
+        return userRepository.findByEmail(request.getEmail())
+                .orElseThrow(BadCredentialsException::new); // 이메일로 찾지 못하면 예외 발생
     }
 }

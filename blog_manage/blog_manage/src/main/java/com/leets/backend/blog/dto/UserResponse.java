@@ -11,6 +11,7 @@ public class UserResponse {
     private final String profileUrl;
     private final String loginType;
     private final LocalDateTime createdAt;
+    private String token;
 
     public UserResponse(User user) {
         this.id = user.getUserId();
@@ -19,6 +20,16 @@ public class UserResponse {
         this.profileUrl = user.getProfileUrl();
         this.loginType = user.getLoginType();
         this.createdAt = user.getCreatedAt();
+    }
+
+    public UserResponse(User user, String token) {
+        this.id = user.getUserId();
+        this.email = user.getEmail();
+        this.nickname = user.getNickname();
+        this.profileUrl = user.getProfileUrl();
+        this.loginType = user.getLoginType();
+        this.createdAt = user.getCreatedAt();
+        this.token = token;
     }
 
     // Getters
@@ -44,5 +55,9 @@ public class UserResponse {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public String getToken() {
+        return token;
     }
 }
