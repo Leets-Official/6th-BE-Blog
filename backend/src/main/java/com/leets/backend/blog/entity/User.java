@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"email"}),
-        @UniqueConstraint(columnNames = {"nickname"}),
-        @UniqueConstraint(columnNames = {"provider", "providerUserId"})
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(name="uk_user_email", columnNames = "email"),
+        @UniqueConstraint(name="uk_user_nickname", columnNames = "nickname"),
+        @UniqueConstraint(name="uk_user_provider_userid", columnNames = {"provider", "providerUserId"})
 })
 
 public class User {
@@ -19,8 +19,8 @@ public class User {
     @Column(length = 255)
     private String email;
 
-    @Column(length = 255)
-    private String password;
+    @Column(length = 255, nullable = false)
+    private String password; // 암호화
 
     @Column(length = 50, nullable = false)
     private String nickname;
@@ -34,7 +34,16 @@ public class User {
     @Column(length = 255)
     private String providerUserId;
 
+    @Column(length = 20, nullable = false)
+    private String role = "USER";
+
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    //생성 시각 자동화
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     // 기본 생성자
     public User() {}
@@ -87,5 +96,9 @@ public class User {
     public LocalDateTime getCreatedAt() { return createdAt; }
 
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getRole() { return role; }
+
+    public void setRole(String role) { this.role = role; }
 }
 
