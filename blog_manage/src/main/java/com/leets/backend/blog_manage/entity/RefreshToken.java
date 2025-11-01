@@ -23,7 +23,38 @@ public class RefreshToken {
 
     public RefreshToken() {}
 
-    // --- Getters ---
+    private RefreshToken(RefreshTokenBuilder builder) {
+        this.id = builder.id;
+        this.token = builder.token;
+        this.expiryDate = builder.expiryDate;
+        this.user = builder.user;
+    }
+
+    public static RefreshTokenBuilder builder() {
+        return new RefreshTokenBuilder();
+    }
+
+    public void updateToken(String token, LocalDateTime expiryDate) {
+        this.token = token;
+        this.expiryDate = expiryDate;
+    }
+
+    public static class RefreshTokenBuilder {
+        private Long id;
+        private String token;
+        private LocalDateTime expiryDate;
+        private User user;
+
+        public RefreshTokenBuilder id(Long id) { this.id = id; return this; }
+        public RefreshTokenBuilder token(String token) { this.token = token; return this; }
+        public RefreshTokenBuilder expiryDate(LocalDateTime expiryDate) { this.expiryDate = expiryDate; return this; }
+        public RefreshTokenBuilder user(User user) { this.user = user; return this; }
+
+        public RefreshToken build() {
+            return new RefreshToken(this);
+        }
+    }
+
     public Long getId() { return id; }
     public String getToken() { return token; }
     public LocalDateTime getExpiryDate() { return expiryDate; }

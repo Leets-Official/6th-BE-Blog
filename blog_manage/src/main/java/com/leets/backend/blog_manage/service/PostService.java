@@ -11,6 +11,7 @@ import com.leets.backend.blog_manage.repository.PostRepository;
 import com.leets.backend.blog_manage.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder; //
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,14 +25,16 @@ public class PostService {
         this.userRepository = userRepository;
     }
 
-    private User getTemporaryUser() {
-        return userRepository.findById(1L)
+    // SecurityContext에서 인증된 사용자 정보를 가져오는 메소드
+    private User getAuthenticatedUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
     @Transactional
     public Post createPost(PostCreateRequest request) {
-        User user = getTemporaryUser();
+        User user = getAuthenticatedUser();
         Post post = request.toEntity(user);
         return postRepository.save(post);
     }
@@ -49,8 +52,10 @@ public class PostService {
 
     @Transactional
     public void updatePost(Long postId, PostUpdateRequest request) {
+        User user = getAuthenticatedUser();
         Post post = findPostById(postId);
-        if (!post.getUser().getId().equals(1L)) {
+
+        if (!post.getUser().getId().equals(user.getId())) {
             throw new CustomException(ErrorCode.NO_AUTHORIZATION);
         }
         post.update(request.getTitle(), request.getContent());
@@ -58,8 +63,10 @@ public class PostService {
 
     @Transactional
     public void deletePost(Long postId) {
+        User user = getAuthenticatedUser();
         Post post = findPostById(postId);
-        if (!post.getUser().getId().equals(1L)) {
+
+        if (!post.getUser().getId().equals(user.getId())) {
             throw new CustomException(ErrorCode.NO_AUTHORIZATION);
         }
         postRepository.delete(post);
