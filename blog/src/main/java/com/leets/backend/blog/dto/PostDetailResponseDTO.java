@@ -1,6 +1,7 @@
 package com.leets.backend.blog.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.leets.backend.blog.entity.Post;
 import com.leets.backend.blog.entity.User;
 
@@ -18,6 +19,7 @@ public class PostDetailResponseDTO {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime updatedAt;
     private AuthorInfoDTO authorInfo;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LoginUserInfoDTO loginUserInfo;
     private List<CommentResponseDTO> comments;
 
@@ -32,7 +34,14 @@ public class PostDetailResponseDTO {
         responseDTO.createdAt = post.getCreatedAt();
         responseDTO.updatedAt = post.getUpdatedAt();
         responseDTO.authorInfo = AuthorInfoDTO.from(post.getUser());
-        responseDTO.loginUserInfo = LoginUserInfoDTO.from(loginUser);
+
+        // loginUser가 null이 아닐 때만 loginUserInfo를 설정
+        if (loginUser != null) {
+            responseDTO.loginUserInfo = LoginUserInfoDTO.from(loginUser);
+        } else {
+            responseDTO.loginUserInfo = null;
+        }
+
         responseDTO.comments = post.getComments().stream()
                 .map(CommentResponseDTO::from)
                 .collect(Collectors.toList());

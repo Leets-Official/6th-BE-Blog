@@ -4,14 +4,15 @@ import com.leets.backend.blog.common.ApiResponse;
 import com.leets.backend.blog.dto.*;
 import com.leets.backend.blog.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Tag(name = "Post API", description = "게시물 관련 API")
@@ -29,9 +30,10 @@ public class PostController {
     @Operation(summary = "게시물 생성", description = "새로운 게시물을 생성합니다.")
     @PostMapping
     public ResponseEntity<ApiResponse<PostResponseDTO>> createPost(
-            @Valid @RequestBody PostCreateRequestDTO requestDTO
+            @Valid @RequestBody PostCreateRequestDTO requestDTO,
+            @Parameter(hidden = true) @AuthenticationPrincipal String email
     ) {
-        PostResponseDTO responseDTO = postService.createPost(requestDTO);
+        PostResponseDTO responseDTO = postService.createPost(requestDTO, email);
 
         // 201 Created 반환
         return new ResponseEntity<>(
@@ -44,9 +46,9 @@ public class PostController {
     @Operation(summary = "게시물 상세 조회", description = "게시물 상세 내용을 조회합니다.")
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResponse<PostDetailResponseDTO>> getPostDetail(
-            @PathVariable Long postId
-    ) {
-        PostDetailResponseDTO responseDTO = postService.getPostDetail(postId);
+            @PathVariable Long postId,
+            @Parameter(hidden = true)Principal principal            ) {
+        PostDetailResponseDTO responseDTO = postService.getPostDetail(postId, principal);
 
         return ResponseEntity.ok(ApiResponse.onSuccess(HttpStatus.OK, "게시물 상세 조회 완료", responseDTO));
     }
@@ -67,9 +69,10 @@ public class PostController {
     @PatchMapping("/{postId}")
     public ResponseEntity<ApiResponse<PostResponseDTO>> updatePost(
             @PathVariable Long postId,
-            @Valid @RequestBody PostUpdateRequestDTO requestDTO
+            @Valid @RequestBody PostUpdateRequestDTO requestDTO,
+            @Parameter(hidden = true) @AuthenticationPrincipal String email
     ) {
-        PostResponseDTO responseDTO = postService.updatePost(postId, requestDTO);
+        PostResponseDTO responseDTO = postService.updatePost(postId, requestDTO, email);
 
         return ResponseEntity.ok(ApiResponse.onSuccess(HttpStatus.OK, "게시물 수정 완료", responseDTO));
     }
@@ -78,9 +81,10 @@ public class PostController {
     @Operation(summary = "게시물 삭제", description = "게시물을 삭제합니다.")
     @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResponse<Void>> deletePost(
-            @PathVariable Long postId
+            @PathVariable Long postId,
+            @Parameter(hidden = true) @AuthenticationPrincipal String email
     ) {
-        postService.deletePost(postId);
+        postService.deletePost(postId, email);
 
         // 204 No Content 반환
         return new ResponseEntity<>(

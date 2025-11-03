@@ -9,6 +9,8 @@ import com.leets.backend.blog.entity.User;
 import com.leets.backend.blog.exception.CommentAccessDeniedException;
 import com.leets.backend.blog.exception.CommentNotFoundException;
 import com.leets.backend.blog.exception.PostNotFoundException;
+import com.leets.backend.blog.exception.auth.AuthException;
+import com.leets.backend.blog.exception.auth.ErrorCode;
 import com.leets.backend.blog.repository.CommentRepository;
 import com.leets.backend.blog.repository.PostRepository;
 import com.leets.backend.blog.repository.UserRepository;
@@ -23,7 +25,6 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    private static final String DUMMY_USER_EMAIL = "dummy@naver.com";
     
     public CommentService(CommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository) {
         this.commentRepository = commentRepository;
@@ -32,8 +33,11 @@ public class CommentService {
     }
     
     // 댓글 생성
-    public CommentResponseDTO createComment(Long postId, CommentCreateRequestDTO requestDTO) {
-        User user = findDummyUser();
+    public CommentResponseDTO createComment(Long postId, CommentCreateRequestDTO requestDTO, String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND));
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
 
@@ -44,8 +48,11 @@ public class CommentService {
     }
     
     // 댓글 수정
-    public CommentResponseDTO updateComment(Long postId, Long commentId, CommentUpdateRequestDTO requestDTO) {
-        User user = findDummyUser();
+    public CommentResponseDTO updateComment(Long postId, Long commentId, CommentUpdateRequestDTO requestDTO, String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND));
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
 
@@ -67,8 +74,11 @@ public class CommentService {
     }
     
     // 댓글 삭제
-    public void deleteComment(Long postId, Long commentId) {
-        User user = findDummyUser();
+    public void deleteComment(Long postId, Long commentId, String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND));
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
 
@@ -86,25 +96,9 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
-    // 더미 유저 생성
-    private User createDummyUser() {
-        User user = new User();
-        return userRepository.save(user.createDummy());
-    }
-
-    // 더미 유저 찾기
-    private User findDummyUser() {
-        User user = userRepository.findByEmail(DUMMY_USER_EMAIL);
-        if(user == null) {
-            user = createDummyUser();
-        }
-        return user;
-    }
-
-    // 댓글 작성자 권한 확인
     private void checkCommentAuthor(Comment comment, User user) {
         if (!comment.getUser().getUserId().equals(user.getUserId())) {
-            throw new CommentAccessDeniedException();
+            throw new CommentAccessDeniedException(); // 403
         }
     }
 }
