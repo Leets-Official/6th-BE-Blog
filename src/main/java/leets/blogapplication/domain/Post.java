@@ -12,7 +12,7 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id") // ✅ 컬럼명 post_id 유지, 자바 필드는 id로 통일
+    @Column(name = "post_id")
     private Long id;
 
     @Column(nullable = false)
