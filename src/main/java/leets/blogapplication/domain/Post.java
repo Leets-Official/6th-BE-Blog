@@ -23,13 +23,13 @@ public class Post {
     private String content;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Column(nullable = true)
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false) // ✅ users_id → user_id 로 통일 (users 테이블의 PK: id)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -39,21 +39,13 @@ public class Post {
     private List<Comment> comments = new ArrayList<>();
 
     //return 안 해도 됨
-    public static Post create(User user, String title, String content) {
+    public static Post create(User user, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
         Post p = new Post();
         p.setUser(user);
-        p.title = title;
-        p.content = content;
-        return p; // ← 편의상 반환해 두면 테스트/사용이 더 깔끔
-    }
-
-    public static Post create(User user, String title, String content, List<Image> images) {
-        Post p = create(user, title, content);
-        if (images != null) {
-            for (Image img : images) {
-                p.addImage(img);
-            }
-        }
+        p.setTitle(title);
+        p.setContent(content);
+        p.setCreatedAt(createdAt);
+        p.setUpdatedAt(updatedAt);
         return p;
     }
 
@@ -66,6 +58,7 @@ public class Post {
     public String getContent() { return content; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public User getUser() { return user; }
 
     // --- setters ---
     public void setTitle(String title) { this.title = title; }

@@ -1,12 +1,19 @@
 package leets.blogapplication.service;
 
-import leets.blogapplication.controller.PostController;
 import leets.blogapplication.domain.Post;
-import leets.blogapplication.domain.User;
+import leets.blogapplication.dto.req.PostReq;
+import leets.blogapplication.dto.res.PostRes;
 import leets.blogapplication.repository.PostRepository;
 import leets.blogapplication.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import leets.blogapplication.domain.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +24,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final int PAGE_SIZE = 10;
 
     public PostService(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
@@ -24,43 +32,42 @@ public class PostService {
     }
 
     // 전체 조회
-    public List<Post> getAll() {
-        return postRepository.findAll();
+    @Transactional
+    public List<PostRes> getAll(int pageNo, String criteria) {
+        Pageable pageable = PageRequest.of(pageNo, PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
+        return postRepository.findAll(pageable).getContent().stream().map(PostRes::transform).toList();
     }
 
     // 생성
     @Transactional
-    public Long create(Long id, String title, String content) {
-        if (title == null || title.isBlank()) {
-            throw new IllegalArgumentException("제목은 필수입니다.");
-        }
-        if (title.length() > 100) {
-            throw new IllegalArgumentException("제목은 100자 이하만 허용됩니다.");
-        }
-
-        User user = userRepository.findById(id).orElse(null);
-
-        leets.blogapplication.domain.Post p = new leets.blogapplication.domain.Post();
-        p.setUser(user);
-        p.setTitle(title);
-        p.setContent(content);
-        p.setCreatedAt(LocalDateTime.now());
-        p.setUpdatedAt(LocalDateTime.now());
-
-        return postRepository.save(p).getId();
+    public Long create(PostReq req) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getPrincipal().toString();
+        Long userId = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                .getId();
+        Post post = Post.create(userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not fount"))
+                , req.getTitle(), req.getContent(), req.getCreatedAt(), req.getUpdatedAt());
+        return postRepository.save(post).getId();
     }
 
 
     // 수정 (변경감지)
     @Transactional
-    public void update(Long id, String title, String content) {
-        Post p = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found: " + id));
+    public void update(PostReq req) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getPrincipal().toString();
 
-        if (title != null) p.setTitle(title);
-        if (content != null) p.setContent(content);
-        p.setUpdatedAt(LocalDateTime.now());
-        // 트랜잭션 종료 시 flush → update
+        User user = postRepository.findById(req.getId())
+                .orElseThrow(() -> new RuntimeException("Post not found"))
+                .getUser();
+        if(user.getId().equals(userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found")).getId())) {
+            postRepository.updatePost(req.getTitle(), req.getContent(), req.getUpdatedAt(), req.getId());
+        } else {
+            throw new RuntimeException("Something wrong while updating post");
+        }
     }
 
     // 삭제
@@ -73,14 +80,14 @@ public class PostService {
     }
 
     // 단건 조회
-    public Post getById(Long id) {
-        return postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found: " + id));
+    public PostRes getById(Long id) {
+        return PostRes.transform(postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found: " + id)));
     }
 
     // 제목 검색
-    public List<Post> getByTitle(String title) {
-        return postRepository.findByTitle(title);
-        // 부분검색 쓰려면 repository 메서드 바꾸고 여기서도 연동
+    public List<PostRes> getByTitle(String title, int pageNo, String criteria) {
+        Pageable pageable = PageRequest.of(pageNo, PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
+        return postRepository.findByTitle(title, pageable).getContent().stream().map(PostRes::transform).toList();
     }
 }

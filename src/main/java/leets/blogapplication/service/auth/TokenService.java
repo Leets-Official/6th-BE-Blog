@@ -1,4 +1,4 @@
-package leets.blogapplication.service;
+package leets.blogapplication.service.auth;
 
 import leets.blogapplication.config.TokenProvider;
 import leets.blogapplication.domain.User;

@@ -6,13 +6,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import leets.blogapplication.service.AccountDetailService;
-
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
+import leets.blogapplication.service.auth.AccountDetailService;
 
 @Configuration
 public class WebSecurityConfig {

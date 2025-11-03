@@ -1,4 +1,4 @@
-package leets.blogapplication.service;
+package leets.blogapplication.service.auth;
 
 import leets.blogapplication.domain.User;
 import leets.blogapplication.repository.UserRepository;

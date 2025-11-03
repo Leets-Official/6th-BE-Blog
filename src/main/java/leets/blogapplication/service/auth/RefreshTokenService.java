@@ -1,4 +1,4 @@
-package leets.blogapplication.service;
+package leets.blogapplication.service.auth;
 
 import leets.blogapplication.domain.RefreshToken;
 import leets.blogapplication.repository.RefreshTokenRepository;
