@@ -1,4 +1,4 @@
-package com.leets.backend.blog.domain;
+package com.leets.backend.blog.entity;
 
 import com.leets.backend.blog.dto.request.UserCreateRequestDTO;
 import com.leets.backend.blog.util.StringUtil;

@@ -1,11 +1,10 @@
-package com.leets.backend.blog.DTO;
+package com.leets.backend.blog.dto.response;
 
-import com.leets.backend.blog.domain.Post;
-import com.leets.backend.blog.domain.User;
+import com.leets.backend.blog.entity.Post;
+import com.leets.backend.blog.entity.User;
 import com.leets.backend.blog.util.StringUtil;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 // 전체 게시물 조회 DTO
 public class PostResponseDto {

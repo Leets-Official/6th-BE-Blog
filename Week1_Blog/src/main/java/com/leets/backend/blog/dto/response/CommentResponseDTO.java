@@ -1,7 +1,7 @@
-package com.leets.backend.blog.DTO;
+package com.leets.backend.blog.dto.response;
 
-import com.leets.backend.blog.domain.Comment;
-import com.leets.backend.blog.domain.User;
+import com.leets.backend.blog.entity.Comment;
+import com.leets.backend.blog.entity.User;
 import com.leets.backend.blog.util.StringUtil;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -14,7 +14,6 @@ public class CommentResponseDTO {
     private String content;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
-    @NotBlank
     private String nickname;
     private String profileImgUrl;
     private Boolean isMyComment;

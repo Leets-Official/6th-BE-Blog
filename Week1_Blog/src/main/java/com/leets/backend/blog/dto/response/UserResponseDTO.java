@@ -1,6 +1,6 @@
-package com.leets.backend.blog.DTO;
+package com.leets.backend.blog.dto.response;
 
-import com.leets.backend.blog.domain.User;
+import com.leets.backend.blog.entity.User;
 import java.time.LocalDateTime;
 
 public class UserResponseDTO {

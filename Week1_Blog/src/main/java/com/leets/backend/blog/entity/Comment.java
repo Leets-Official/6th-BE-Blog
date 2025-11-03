@@ -1,4 +1,4 @@
-package com.leets.backend.blog.domain;
+package com.leets.backend.blog.entity;
 
 import com.leets.backend.blog.dto.request.CommentRequestDTO;
 import jakarta.persistence.*;
@@ -41,24 +41,24 @@ public class Comment {
     // 기본 생성자
     public Comment() {}
 
-    public static Comment createComment(Post post, User user, CommentRequestDTO dto) {
+    public static Comment createComment(Post post, User user, String content) {
         Comment comment = new Comment();
 
         comment.post = post;
         comment.user = user;
-        comment.content = dto.getContent();
+        comment.content = content;
         comment.createDate = LocalDateTime.now();
 
         return comment;
     }
 
-    public static Comment createChildComment(Post post, User user, Long parentCommentId, CommentRequestDTO dto) {
+    public static Comment createChildComment(Post post, User user, Long parentCommentId, String content) {
         Comment comment = new Comment();
 
         comment.post = post;
         comment.user = user;
         comment.parentCommentId = parentCommentId;
-        comment.content = dto.getContent();
+        comment.content = content;
         comment.createDate = LocalDateTime.now();
 
         return comment;

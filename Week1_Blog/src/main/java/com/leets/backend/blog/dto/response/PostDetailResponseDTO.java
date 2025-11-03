@@ -1,8 +1,8 @@
-package com.leets.backend.blog.DTO;
+package com.leets.backend.blog.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.leets.backend.blog.domain.Post;
-import com.leets.backend.blog.domain.User;
+import com.leets.backend.blog.entity.Post;
+import com.leets.backend.blog.entity.User;
 import com.leets.backend.blog.util.StringUtil;
 
 import java.time.LocalDateTime;
@@ -22,16 +22,32 @@ public class PostDetailResponseDTO {
     private LocalDateTime updateDate;
     private Boolean isMyPost;
 
-    public PostDetailResponseDTO(Post post, User user, List<CommentResponseDTO> comments, Long currentUserId) {
-        this.postId = post.getPostId();
-        this.nickname = user.getNickname();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.comments = comments;
-        this.isMyPost = StringUtil.isNullOrEmpty(currentUserId.toString()) ? false :
+    //public PostDetailResponseDTO(Post post, User user, List<CommentResponseDTO> comments, Long currentUserId) {
+    //    this.postId = post.getPostId();
+    //    this.nickname = user.getNickname();
+    //    this.title = post.getTitle();
+    //    this.content = post.getContent();
+    //    this.comments = comments;
+    //    this.isMyPost = StringUtil.isNullOrEmpty(currentUserId.toString()) ? false :
+    //            post.getUser().getUserId().equals(currentUserId);
+    //    this.createDate = post.getCreateDate();
+    //    this.updateDate = post.getUpdateDate();
+    //}
+
+    public static PostDetailResponseDTO toDto(Post post, User user, List<CommentResponseDTO> comments, Long currentUserId){
+        var dto = new PostDetailResponseDTO();
+
+        dto.postId = post.getPostId();
+        dto.nickname = user.getNickname();
+        dto.title = post.getTitle();
+        dto.content = post.getContent();
+        dto.comments = comments;
+        dto.isMyPost = StringUtil.isNullOrEmpty(currentUserId.toString()) ? false :
                 post.getUser().getUserId().equals(currentUserId);
-        this.createDate = post.getCreateDate();
-        this.updateDate = post.getUpdateDate();
+        dto.createDate = post.getCreateDate();
+        dto.updateDate = post.getUpdateDate();
+
+        return dto;
     }
 
     public Long getPostId() {

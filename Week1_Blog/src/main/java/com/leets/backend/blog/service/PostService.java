@@ -1,8 +1,11 @@
 package com.leets.backend.blog.service;
 
-import com.leets.backend.blog.DTO.*;
-import com.leets.backend.blog.domain.*;
+import com.leets.backend.blog.entity.*;
+import com.leets.backend.blog.dto.request.*;
+import com.leets.backend.blog.dto.response.*;
+import com.leets.backend.blog.exception.*;
 import com.leets.backend.blog.repository.*;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -19,98 +22,102 @@ public class PostService {
     }
 
     // 전체 게시물 조회
-    public List<PostResponseDto> GetAllPosts(Long userId) {
-        List<Post> posts = postRepository.findAll();
+    public List<PostResponseDto> getAllPosts(Long userId, int page) {
 
-        return posts.stream().map(post -> {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<Post> postsPage = postRepository.findAll(pageable); // 페이지네이션 적용
+        //List<Post> posts = postRepository.findAll();
+
+        return postsPage.stream().map(post -> {
             User user = userRepository.findById(post.getUser().getUserId())
-                    .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
             return new PostResponseDto(post, user, 1L); // 3번째 파라미터 임시 userId
         }).toList();
     }
 
-    public PostDetailResponseDTO CreatePost(PostRequestDTO dto, Long currentUserId){
+    public PostDetailResponseDTO createPost(PostRequestDTO dto, Long currentUserId){
         Post newPost = Post.createPost(dto, userRepository.findById(1L).get());
 
         Post savedPost = postRepository.save(newPost);
 
-        return GetPostDetail(savedPost.getPostId(), 1L); // 1L userId
+        return getPostDetail(savedPost.getPostId(), 1L); // 1L userId
     }
 
-    public PostDetailResponseDTO GetPostDetail(Long postId, Long currentUserId) {
+    public PostDetailResponseDTO getPostDetail(Long postId, Long currentUserId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 게시물입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         User user = post.getUser();
 
         List<CommentResponseDTO> comments = post.getComments().stream()
                 .map(comment -> new CommentResponseDTO(comment, comment.getUser(), 1L)).toList();
-        PostDetailResponseDTO dto = new PostDetailResponseDTO(post, user, comments, 1L);
+        PostDetailResponseDTO dto = PostDetailResponseDTO.toDto(post, user, comments, 1L);
 
         return dto;
     }
 
-    public PostDetailResponseDTO UpdatePost(Long postId, PostRequestDTO dto, Long currentUserId) {
+    public PostDetailResponseDTO updatePost(Long postId, PostRequestDTO dto, Long currentUserId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 게시물입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         if (!post.getUser().getUserId().equals(1L))
-            throw new RuntimeException("수정 권한이 없습니다. post_id : " + postId);
+            throw new CustomException(ErrorCode.NO_UPDATE_PERMISSION);
 
         post.updatePost(dto.getTitle(), dto.getContent());
 
         Post updatedPost = postRepository.save(post);
 
-        return GetPostDetail(postId, 1L);
+        return getPostDetail(postId, 1L);
     }
 
-    public PostDetailResponseDTO DeletePost(Long postId, Long currentUserId) {
+    public PostDetailResponseDTO deletePost(Long postId, Long currentUserId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("삭제할 게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         if (!post.getUser().getUserId().equals(1L)) {
-            throw new RuntimeException("삭제 권한이 없습니다.");
+            throw new CustomException(ErrorCode.NO_DELETE_PERMISSION);
         }
 
         postRepository.delete(post);
 
-        return GetPostDetail(postId, 1L);
+        return getPostDetail(postId, 1L);
     }
 
-    public CommentResponseDTO CreateComment(Long postId, CommentRequestDTO dto , Long currentUserId){
+    public CommentResponseDTO createComment(Long postId, CommentRequestDTO dto , Long currentUserId){
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         User user = userRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        Comment newComment = Comment.createComment(post, user, dto);
+        Comment newComment = Comment.createComment(post, user, dto.getContent());
 
         Comment savedComment = commentRepository.save(newComment);
 
         return new CommentResponseDTO(savedComment, savedComment.getUser(), 1L);
     }
 
-    public CommentResponseDTO CreateChildComment(Long postId, Long parentCommentId, CommentRequestDTO dto , Long currentUserId){
+    public CommentResponseDTO createChildComment(Long postId, Long parentCommentId, CommentRequestDTO dto , Long currentUserId){
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         User user = userRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        Comment newComment = Comment.createChildComment(post, user, parentCommentId, dto);
+        Comment newComment = Comment.createChildComment(post, user, parentCommentId, dto.getContent());
 
         Comment savedComment = commentRepository.save(newComment);
 
         return new CommentResponseDTO(savedComment, savedComment.getUser(), 1L);
     }
 
-    public CommentResponseDTO UpdateComment(Long commentId, CommentRequestDTO dto, Long currentUserId){
+    public CommentResponseDTO updateComment(Long commentId, CommentRequestDTO dto, Long currentUserId){
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 댓글입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
 
         if (!comment.getUser().getUserId().equals(1L))
-            throw new RuntimeException("수정 권한이 없습니다. comment_id : " + commentId);
+            throw new CustomException(ErrorCode.NO_UPDATE_PERMISSION);
 
         comment.updateComment(dto.getContent());
 
@@ -119,12 +126,12 @@ public class PostService {
         return new CommentResponseDTO(updatedComment, updatedComment.getUser(), 1L);
     }
 
-    public CommentResponseDTO DeleteComment(Long commentId, Long currentUserId){
+    public CommentResponseDTO deleteComment(Long commentId, Long currentUserId){
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 댓글입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
 
         if (!comment.getUser().getUserId().equals(1L))
-            throw new RuntimeException("삭제 권한이 없습니다. comment_id : " + commentId);
+            throw new CustomException(ErrorCode.NO_DELETE_PERMISSION);
 
         commentRepository.delete(comment);
 

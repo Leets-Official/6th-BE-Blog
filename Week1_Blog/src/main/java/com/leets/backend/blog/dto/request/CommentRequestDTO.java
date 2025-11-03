@@ -1,4 +1,4 @@
-package com.leets.backend.blog.DTO;
+package com.leets.backend.blog.dto.request;
 
 public class CommentRequestDTO {
     private String content;

@@ -1,4 +1,4 @@
-package com.leets.backend.blog.DTO;
+package com.leets.backend.blog.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;

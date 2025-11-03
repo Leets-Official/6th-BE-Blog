@@ -1,4 +1,4 @@
-package com.leets.backend.blog.DTO;
+package com.leets.backend.blog.dto.response;
 
 public class LoginResponseDTO {
     private String nickname;

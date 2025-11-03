@@ -1,10 +1,8 @@
-package com.leets.backend.blog.DTO;
+package com.leets.backend.blog.dto.request;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.Bag;
 
 import java.time.LocalDateTime;
 

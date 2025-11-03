@@ -1,8 +1,6 @@
 package com.leets.backend.blog.controller;
 
-import com.leets.backend.blog.DTO.*;
 import com.leets.backend.blog.service.AuthService;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
