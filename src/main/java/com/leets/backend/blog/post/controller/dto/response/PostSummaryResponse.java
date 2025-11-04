@@ -14,7 +14,7 @@ public class PostSummaryResponse {
     }
 
     public static PostSummaryResponse from(Post post) {
-        return new PostSummaryResponse(post.getPostId(), post.getTitle(),  post.getContent());
+        return new PostSummaryResponse(post.getId(), post.getTitle(),  post.getContent());
     }
 
     public Long getPostId() { return postId; }

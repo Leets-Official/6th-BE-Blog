@@ -14,7 +14,11 @@ public enum ErrorCode {
     NO_DELETE(1003, HttpStatus.FORBIDDEN, "게시글 삭제 권한이 없습니다."),
 
     // 유저 관련
-    USER_NOT_FOUND(1001, HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
+    USER_NOT_FOUND(1001, HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."),
+
+    // 댓글 관련
+    COMMENT_NOT_FOUND(3001, HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
+    UNAUTHORIZED_COMMENT_ACCESS(3002, HttpStatus.FORBIDDEN, "댓글 수정/삭제 권한이 없습니다.");
 
     private final int code;
     private final HttpStatus httpStatus;

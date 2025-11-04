@@ -28,7 +28,7 @@ public class PostResponse {
         String updated = post.getUpdatedAt() != null ? post.getUpdatedAt().format(formatter) : null;
 
         return new PostResponse(
-                post.getPostId(),
+                post.getId(),
                 post.getTitle(),
                 post.getContent(),
                 post.getNickname(),

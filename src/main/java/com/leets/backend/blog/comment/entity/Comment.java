@@ -1,25 +1,27 @@
-package com.leets.backend.blog.post.entity;
+package com.leets.backend.blog.comment.entity;
 
+import com.leets.backend.blog.post.entity.Post;
 import com.leets.backend.blog.post.entity.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "posts")
-public class Post {
+@Table(name = "comments")
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 255)
-    private String title;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -27,37 +29,30 @@ public class Post {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    protected Post() {}
+    // 기본 생성자
+    protected Comment() {
+    }
 
-    public Post(String title, String content, User user) {
-        this.title = title;
-        this.content = content;
+    public Comment(Post post, User user, String content) {
+        this.post = post;
         this.user = user;
+        this.content = content;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
     // 정적 팩토리 메서드
-    public static Post of(String title, String content, User user) {
-        return new Post(title, content, user);
+    public static Comment of(Post post, User user, String content) {
+        return new Comment(post, user, content);
     }
 
-    public Long getId() { return id; }
-
-    public String getTitle() {
-        return title;
+    // getter
+    public Long getId() {
+        return id;
     }
 
     public String getContent() {
         return content;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public String getNickname() {
-        return user.getNickname();
     }
 
     public LocalDateTime getCreatedAt() {
@@ -68,9 +63,16 @@ public class Post {
         return updatedAt;
     }
 
-    public void update(String title, String content) {
-        this.title = title;
-        this.content = content;
+    public User getUser() {
+        return user;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void updateContent(String newContent) {
+        this.content = newContent;
         this.updatedAt = LocalDateTime.now();
     }
 }
