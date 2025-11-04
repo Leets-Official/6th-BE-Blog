@@ -3,6 +3,7 @@ spring:
     url: jdbc:mysql://localhost:3306/blogdb?serverTimezone=Asia/Seoul
     username: root
     password: 1234
+
   jpa:
     hibernate:
       ddl-auto: update  # 개발 단계에서는 update / 운영은 validate 권장
@@ -10,3 +11,17 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: your_email@gmail.com
+    password: your_app_password
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+jwt:
+  secret: "ChangeThisToASuperLongRandomSecretKeyForJWT1234567890!@#ABCD"
+  access-token-validity: 900000         # 15분 (단위: 밀리초)
+  refresh-token-validity: 1209600000    # 14일 (단위: 밀리초)

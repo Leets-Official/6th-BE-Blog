@@ -82,11 +82,7 @@ public class PostService {
     }
 
     private User findOrCreateDummyUser() {
-        User user = userRepository.findByEmail(DUMMY_EMAIL);
-        if (user == null) {
-            user = User.createDummy();
-            return userRepository.save(user);
-        }
-        return user;
+        return userRepository.findByEmail(DUMMY_EMAIL)
+                .orElseGet(() -> userRepository.save(User.createDummy()));
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-//@RestControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     // 400 Bad Request (DTO 검증 실패)
@@ -45,6 +45,7 @@ public class GlobalExceptionHandler {
     // 500 Internal Server Error
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneralException(Exception exception) {
+        exception.printStackTrace();
         return new ResponseEntity<>(
                 ApiResponse.onFailure(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류 발생", null),
                 HttpStatus.INTERNAL_SERVER_ERROR
