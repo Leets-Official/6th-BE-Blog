@@ -1,7 +1,8 @@
 package com.leets.backend.blog.controller;
 
 import com.leets.backend.blog.common.dto.ApiResponse;
-import com.leets.backend.blog.config.JwtTokenProvider;
+import com.leets.backend.blog.dto.AuthResponse;
+import com.leets.backend.blog.dto.TokenRefreshRequest;
 import com.leets.backend.blog.dto.UserLoginRequest;
 import com.leets.backend.blog.dto.UserSignUpRequest;
 import com.leets.backend.blog.dto.UserResponse;
@@ -10,8 +11,6 @@ import com.leets.backend.blog.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,11 +18,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthController(AuthService authService, JwtTokenProvider jwtTokenProvider) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/signup")
@@ -34,11 +31,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UserResponse>> login(@Valid @RequestBody UserLoginRequest request) {
-        User user = authService.login(request);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String jwt = jwtTokenProvider.generateToken(authentication);
-        UserResponse userResponse = new UserResponse(user, jwt);
-        return ResponseEntity.ok(ApiResponse.success(userResponse));
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody UserLoginRequest request) {
+        AuthResponse authResponse = authService.login(request);
+        return ResponseEntity.ok(ApiResponse.success(authResponse));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<AuthResponse>> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+        AuthResponse authResponse = authService.refreshAccessToken(request.getRefreshToken());
+        return ResponseEntity.ok(ApiResponse.success(authResponse));
     }
 }

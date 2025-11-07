@@ -7,6 +7,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -17,24 +19,29 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+
     private final Key key;
+    private final long accessTokenExpirationMs;
+    private final long refreshTokenExpirationMs;
 
-    // 토큰 유효 시간 (밀리초 단위)
-    private final long JWT_EXPIRATION_MS = 604800000L; // 7일
-
-    public JwtTokenProvider(@Value("${jwt.secret}") String secret) {
+    public JwtTokenProvider(@Value("${jwt.secret}") String secret,
+                            @Value("${jwt.access-token-expiration-ms}") long accessTokenExpirationMs,
+                            @Value("${jwt.refresh-token-expiration-ms}") long refreshTokenExpirationMs) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+        this.accessTokenExpirationMs = accessTokenExpirationMs;
+        this.refreshTokenExpirationMs = refreshTokenExpirationMs;
     }
 
-    // JWT 토큰 생성
-    public String generateToken(Authentication authentication) {
+    // 액세스 토큰 생성
+    public String generateAccessToken(Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION_MS);
+        Date expiryDate = new Date(now.getTime() + accessTokenExpirationMs);
 
         return Jwts.builder()
-                .setSubject(userDetails.getUsername()) // 사용자 이메일 (username)을 subject로 설정
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS512)
@@ -54,13 +61,13 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(authToken);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException ex) {
-            // 잘못된 JWT 서명
+            logger.error("Invalid JWT signature");
         } catch (ExpiredJwtException ex) {
-            // 만료된 JWT 토큰
+            logger.error("Expired JWT token");
         } catch (UnsupportedJwtException ex) {
-            // 지원되지 않는 JWT 토큰
+            logger.error("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
-            // JWT 토큰이 잘못됨
+            logger.error("JWT claims string is empty.");
         }
         return false;
     }

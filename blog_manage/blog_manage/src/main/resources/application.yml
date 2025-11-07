@@ -24,3 +24,5 @@ logging:
 
 jwt:
   secret: Fj9utiukO/Xl4cLycWatYJMzqzrGMdo1Rws/EgjdRMY+pXfR26CzsZIGya9voPOu+Uc/+AOBuSfN4nGVAfWPIg==
+  access-token-expiration-ms: 3600000 # 1시간
+  refresh-token-expiration-ms: 604800000 # 7일
