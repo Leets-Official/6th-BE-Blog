@@ -12,7 +12,9 @@ import com.leets.backend.blog.config.jwt.JwtTokenProvider;
 import com.leets.backend.blog.domain.RefreshToken;
 import com.leets.backend.blog.domain.User;
 import com.leets.backend.blog.dto.TokenInfo;
-import com.leets.backend.blog.dto.UserSignUpRequestDto; // 이 import는 이제 사용되지 않지만, 있어도 문제는 없습니다.
+import com.leets.backend.blog.dto.UserSignUpRequestDto;
+// [추가] 로그인 DTO import
+import com.leets.backend.blog.dto.UserLoginRequestDto;
 import com.leets.backend.blog.repository.RefreshTokenRepository;
 import com.leets.backend.blog.repository.UserRepository;
 
@@ -58,6 +60,49 @@ public class AuthService {
     }
 
     /**
+     * [추가된 로그인 메소드]
+     * 로그인 비즈니스 로직
+     */
+    @Transactional
+    public TokenInfo login(UserLoginRequestDto requestDto) {
+        // 1. 이메일로 사용자 조회
+        User user = userRepository.findByEmail(requestDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
+
+        // 2. 비밀번호 일치 여부 확인
+        // (requestDto.getPassword(): 사용자가 입력한 원본 비밀번호, user.getPassword(): DB에 저장된 암호화된 비밀번호)
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+        }
+
+        // 3. 인증 성공: 토큰 생성
+        // 3-1. 사용자의 권한 정보(roles)를 문자열로 변환 (reissueToken 로직과 동일)
+        String authorities = user.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        long now = (new Date()).getTime();
+
+        // 3-2. Access Token 생성
+        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), authorities, now);
+
+        // 3-3. Refresh Token 생성
+        String refreshToken = jwtTokenProvider.createRefreshToken(now);
+
+        // 4. Refresh Token을 DB에 저장 (사용자 ID와 매핑)
+        //    (기존에 토큰이 있다면 새 토큰으로 덮어쓰기/업데이트)
+        RefreshToken rt = refreshTokenRepository.findByUserId(user.getId())
+                .orElse(new RefreshToken(user.getId())); // 새 RefreshToken 객체 생성 (userId만 설정)
+
+        rt.updateToken(refreshToken); // 새 Refresh Token 값으로 업데이트
+        refreshTokenRepository.save(rt); // DB에 저장 (insert or update)
+
+        // 5. 토큰 정보(TokenInfo) DTO로 반환
+        return TokenInfo.of("Bearer", accessToken, refreshToken);
+    }
+
+
+    /**
      * 9. 토큰 재발급(reissue) 서비스 메서드 구현
      * @param requestRefreshToken (String 토큰 값)
      * @return 갱신된 TokenInfo (새 Access Token + 기존 Refresh Token)
@@ -89,4 +134,3 @@ public class AuthService {
         return TokenInfo.of("Bearer", newAccessToken, requestRefreshToken);
     }
 }
-

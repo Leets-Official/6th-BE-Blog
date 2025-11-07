@@ -15,7 +15,6 @@ spring:
     show-sql: true
     open-in-view: false
 
-
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -24,8 +23,18 @@ springdoc:
     version: "v1.0.0"
     description: "블로그 프로젝트 API 명세서입니다."
 
-
+# ==================================
+# JWT (JSON Web Token) 설정
+# ==================================
 jwt:
-  secret: "YOUR_SUPER_SECRET_JWT_KEY_NEEDS_TO_BE_VERY_LONG_AND_SECURE_REPLACE_THIS_NOW"
-  access-token-expiration-ms: 3600000
+  # HMAC-SHA 알고리즘을 위한 비밀키. Base64로 인코딩된 64바이트 이상의 문자열 권장
+  # 예시: (테스트용)
+  secret: "eW91ci1zdXBlci1zdHJvbmctc2VjcmV0LWtleS1iYXNlNjQtZW5jb2RlZA=="
 
+  # Access Token 만료 시간 (밀리초 단위)
+  # 30분 = 30 * 60 * 1000 = 1800000
+  access-token-expiration-ms: 1800000
+
+  # Refresh Token 만료 시간 (밀리초 단위)
+  # 7일 = 7 * 24 * 60 * 60 * 1000 = 604800000
+  refresh-token-expiration-ms: 604800000
