@@ -10,12 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.leets.backend.blog.dto.TokenInfo;
 import com.leets.backend.blog.dto.TokenReissueRequestDto;
 import com.leets.backend.blog.dto.UserSignUpRequestDto;
-// [추가] 로그인 DTO를 import 합니다.
 import com.leets.backend.blog.dto.UserLoginRequestDto;
 import com.leets.backend.blog.service.AuthService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.validation.Valid;
 
+@Tag(name = "Auth API", description = "사용자 인증(회원가입, 로그인, 토큰) 관련 API")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -30,60 +33,34 @@ public class AuthController {
      * 회원가입 API
      * POST /auth
      */
+    @Operation(summary = "회원가입", description = "이메일, 닉네임, 비밀번호로 회원가입을 진행합니다.")
     @PostMapping
     public ResponseEntity<String> signUp(@Valid @RequestBody UserSignUpRequestDto requestDto) {
-        // 4. 예외 처리를 위해 try-catch 추가
-        try {
-            authService.signUp(requestDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 성공적으로 완료되었습니다.");
-        } catch (IllegalArgumentException e) {
-            // 이메일/닉네임 중복 시 400 Bad Request 반환
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        authService.signUp(requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 성공적으로 완료되었습니다.");
     }
 
     /**
-     * [추가된 로그인 API]
      * 로그인 API
      * POST /auth/login
      */
+    @Operation(summary = "로그인", description = "이메일, 비밀번호로 로그인을 진행하고 토큰(Access, Refresh)을 발급받습니다.")
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginRequestDto requestDto) {
-        try {
-            // AuthService에 login(UserLoginRequestDto) 메소드가 구현되어 있어야 합니다.
-            // 이 메소드는 인증 성공 시 TokenInfo를 반환합니다.
-            TokenInfo tokenInfo = authService.login(requestDto);
-
-            // 로그인 성공 시 200 OK와 함께 토큰 정보(TokenInfo)를 응답 본문에 반환
-            return ResponseEntity.ok(tokenInfo);
-
-        } catch (IllegalArgumentException e) { // 또는 Spring Security의 AuthenticationException
-            // authService.login에서 이메일/비밀번호 불일치 시
-            // 예외를 발생시킨다고 가정합니다.
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED) // 401: 인증 실패
-                    .body(e.getMessage()); // "이메일 또는 비밀번호가 올바르지 않습니다."
-        }
+    public ResponseEntity<TokenInfo> login(@Valid @RequestBody UserLoginRequestDto requestDto) {
+        // !! try-catch 제거 !!
+        // 서비스에서 예외 발생 시 GlobalExceptionHandler가 처리합니다.
+        TokenInfo tokenInfo = authService.login(requestDto);
+        return ResponseEntity.ok(tokenInfo);
     }
 
-
     /**
-     * 5. 토큰 재발급 API 구현 (기존 코드)
+     * 토큰 재발급 API
      * POST /auth/reissue
      */
+    @Operation(summary = "토큰 재발급", description = "유효한 Refresh Token을 사용하여 Access Token과 Refresh Token을 재발급받습니다.")
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissueToken(@Valid @RequestBody TokenReissueRequestDto requestDto) {
-        try {
-            // [수정된 부분]
-            // requestDto 객체 대신, 그 안의 Refresh Token 문자열을 전달합니다.
-            TokenInfo tokenInfo = authService.reissueToken(requestDto.getRefreshToken());
-
-            return ResponseEntity.ok(tokenInfo);
-        } catch (IllegalArgumentException e) {
-            // 유효하지 않은 토큰(만료, 위조, DB에 없음 등)일 경우 401 Unauthorized 반환
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(e.getMessage());
-        }
+    public ResponseEntity<TokenInfo> reissueToken(@Valid @RequestBody TokenReissueRequestDto requestDto) {
+        TokenInfo tokenInfo = authService.reissueToken(requestDto.getRefreshToken());
+        return ResponseEntity.ok(tokenInfo);
     }
 }

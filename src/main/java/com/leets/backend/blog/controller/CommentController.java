@@ -31,7 +31,7 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @Operation(summary = "댓글 작성", description = "특정 게시글에 새 댓글을 작성합니다.") // 2. @Operation 추가
+    @Operation(summary = "댓글 작성", description = "특정 게시글에 새 댓글을 작성합니다.")
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<CommentResponse> saveComment(
             @PathVariable Long postId,
@@ -60,7 +60,7 @@ public class CommentController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "댓글 삭제", description = "특정 댓글을 삭제합니다.") // 2. @Operation 추가
+    @Operation(summary = "댓글 삭제", description = "특정 댓글을 삭제합니다.")
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long commentId
