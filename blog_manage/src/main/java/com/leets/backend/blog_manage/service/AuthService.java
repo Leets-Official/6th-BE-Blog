@@ -13,8 +13,8 @@ import com.leets.backend.blog_manage.security.jwt.JwtTokenProvider;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,20 +30,20 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final AuthenticationManager authenticationManager;
     private final long refreshTokenExpirationMillis;
 
     public AuthService(UserRepository userRepository,
                        RefreshTokenRepository refreshTokenRepository,
                        PasswordEncoder passwordEncoder,
                        JwtTokenProvider jwtTokenProvider,
-                       AuthenticationManagerBuilder authenticationManagerBuilder,
+                       AuthenticationManager authenticationManager,
                        @Value("${jwt.refresh-token-expiration}") long refreshTokenExpirationMillis) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.authenticationManager = authenticationManager;
         this.refreshTokenExpirationMillis = refreshTokenExpirationMillis;
     }
 
@@ -67,7 +67,7 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    // 2. 로그인
+    // 2. 로그인 (리팩토링됨)
     @Transactional
     public TokenResponse login(LoginRequest request, HttpServletResponse response) {
         // 1. Login ID/PW를 기반으로 Authentication 객체 생성
@@ -77,33 +77,46 @@ public class AuthService {
         // 2. 실제 검증 (CustomUserDetailsService 사용)
         Authentication authentication;
         try {
-            authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+            // 주입받은 authenticationManager 사용
+            authentication = authenticationManager.authenticate(authenticationToken);
         } catch (Exception e) {
             // 인증 실패
             throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
         }
 
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
+        // 3. 인증 정보를 기반으로 AccessToken 생성
         String accessToken = jwtTokenProvider.createAccessToken(authentication);
-        String refreshTokenString = jwtTokenProvider.createRefreshToken(authentication);
 
-        // 4. RefreshToken DB에 저장 (User와 1:1)
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        LocalDateTime expiryDate = LocalDateTime.now().plus(refreshTokenExpirationMillis, ChronoUnit.MILLIS);
-
-        RefreshToken refreshToken = refreshTokenRepository.findByUser(user)
-                .orElse(RefreshToken.builder().user(user).build()); // 없으면 새로 생성
-
-        refreshToken.updateToken(refreshTokenString, expiryDate);
-        refreshTokenRepository.save(refreshToken);
+        // 4. RefreshToken 생성 및 DB 저장 (별도 메소드로 분리)
+        String refreshTokenString = createAndSaveRefreshToken(authentication);
 
         // 5. RefreshToken을 HttpOnly Secure 쿠키에 담아 응답
         addRefreshTokenToCookie(response, refreshTokenString);
 
         // 6. AccessToken은 응답 본문에 담아 반환
         return new TokenResponse(accessToken);
+    }
+
+    // [추가] RefreshToken 생성 및 저장을 담당하는 private 메소드
+    private String createAndSaveRefreshToken(Authentication authentication) {
+        // Refresh Token 생성
+        String refreshTokenString = jwtTokenProvider.createRefreshToken(authentication);
+
+        // User 조회
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 만료 시간 설정
+        LocalDateTime expiryDate = LocalDateTime.now().plus(refreshTokenExpirationMillis, ChronoUnit.MILLIS);
+
+        // RefreshToken 조회 및 업데이트 (없으면 새로 생성)
+        RefreshToken refreshToken = refreshTokenRepository.findByUser(user)
+                .orElse(RefreshToken.builder().user(user).build());
+
+        refreshToken.updateToken(refreshTokenString, expiryDate);
+        refreshTokenRepository.save(refreshToken);
+
+        return refreshTokenString;
     }
 
     // RefreshToken을 쿠키에 추가하는 헬퍼 메소드
