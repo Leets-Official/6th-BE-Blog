@@ -1,8 +1,11 @@
 package com.leets.backend.blog.exception;
 
 import com.leets.backend.blog.common.ApiResponse;
+import com.leets.backend.blog.exception.auth.AuthException;
+import com.leets.backend.blog.exception.auth.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,7 +38,7 @@ public class GlobalExceptionHandler {
     }
 
     // 403 Forbidden
-    @ExceptionHandler(CommentAccessDeniedException.class)
+    @ExceptionHandler({CommentAccessDeniedException.class, AccessDeniedException.class})
     public ResponseEntity<ApiResponse<Void>> handleCommentAccessDeniedException(CommentAccessDeniedException exception) {
         return new ResponseEntity<>(
                 ApiResponse.onFailure(HttpStatus.FORBIDDEN, exception.getMessage()),
@@ -59,9 +62,20 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // AuthException
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthException(AuthException exception) {
+        ErrorCode errorCode = exception.getErrorCode();
+        return new ResponseEntity<>(
+                ApiResponse.onFailure(errorCode.getStatus(), errorCode.getMessage()),
+                errorCode.getStatus()
+        );
+    }
+
     // 500 Internal Server Error
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneralException(Exception exception) {
+        exception.printStackTrace();
         return new ResponseEntity<>(
                 ApiResponse.onFailure(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류 발생"),
                 HttpStatus.INTERNAL_SERVER_ERROR

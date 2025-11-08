@@ -24,3 +24,9 @@ springdoc:
     title: "Leets 6th 블로그 과제 API DOC"
     version: "v1.0.0"
     description: "게시물 CRUD 기능에 대한 API 명세서입니다."
+
+# JWT (JSON Web Token) 설정
+jwt:
+  secret: "W2Bxf8LRrTei5thxLZbG4cQi/lDeXogj9P3n+FJmNRga8WHiRdph1F9o/lLQT7epnovSQGMfAsmwX4UngWp+ng=="
+  access-token-expiration-ms: 3600000  # 1시간
+  refresh-token-expiration-ms: 604800000 # 7일

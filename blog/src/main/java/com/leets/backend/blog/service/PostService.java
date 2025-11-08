@@ -4,13 +4,18 @@ import com.leets.backend.blog.dto.*;
 import com.leets.backend.blog.entity.Post;
 import com.leets.backend.blog.entity.User;
 import com.leets.backend.blog.exception.PostNotFoundException;
+import com.leets.backend.blog.exception.auth.AuthException;
+import com.leets.backend.blog.exception.auth.ErrorCode;
 import com.leets.backend.blog.repository.PostRepository;
 import com.leets.backend.blog.repository.UserRepository;
 import org.springframework.data.domain.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -18,8 +23,6 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-
-    private static final String DUMMY_USER_EMAIL = "dummy@naver.com";
     private static final int PAGE_SIZE = 10;
 
     public PostService(PostRepository postRepository, UserRepository userRepository) {
@@ -28,9 +31,11 @@ public class PostService {
     }
 
     // 게시물 생성
-    public PostResponseDTO createPost(PostCreateRequestDTO requestDTO) {
+    public PostResponseDTO createPost(PostCreateRequestDTO requestDTO, String email) {
 
-        User user = findDummyUser();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND));
+
         Post post = Post.createPost(
                 requestDTO.getTitle(), requestDTO.getContent(), user
         );
@@ -41,11 +46,15 @@ public class PostService {
 
     // 게시물 상세 조회
     @Transactional(readOnly = true)
-    public PostDetailResponseDTO getPostDetail(Long postId) {
+    public PostDetailResponseDTO getPostDetail(Long postId, Principal principal) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
-        User loginUser = findDummyUser();
+        // Principal에서 email을 추출하고 DB에서 User 조회
+        Optional<String> currentUserEmail = Optional.ofNullable(principal).map(Principal::getName);
+
+        User loginUser = currentUserEmail.flatMap(userRepository::findByEmail)
+                .orElse(null);
 
         return PostDetailResponseDTO.from(post, loginUser);
     }
@@ -65,9 +74,15 @@ public class PostService {
     }
 
     // 게시물 수정
-    public PostResponseDTO updatePost(Long postId, PostUpdateRequestDTO requestDTO) {
+    public PostResponseDTO updatePost(Long postId, PostUpdateRequestDTO requestDTO, String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND));
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
+
+        checkPostAuthor(post, user);
 
         post.updatePost(requestDTO.getTitle(), requestDTO.getContent());
 
@@ -75,25 +90,22 @@ public class PostService {
     }
 
     // 게시물 삭제
-    public void deletePost(Long postId) {
+    public void deletePost(Long postId, String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND));
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
+
+        checkPostAuthor(post, user);
 
         postRepository.delete(post);
     }
 
-    // 더미 유저 생성
-    private User createDummyUser() {
-        User user = new User();
-        return userRepository.save(user.createDummy());
-    }
-
-    // 더미 유저 찾기
-    private User findDummyUser() {
-        User user = userRepository.findByEmail(DUMMY_USER_EMAIL);
-        if(user == null) {
-            user = createDummyUser();
+    private void checkPostAuthor(Post post, User user) {
+        if (!post.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("게시물 수정/삭제 권한이 없습니다.");
         }
-        return user;
     }
 }

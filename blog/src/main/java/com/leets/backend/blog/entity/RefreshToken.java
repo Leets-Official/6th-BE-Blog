@@ -11,13 +11,21 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "token_id")
     private Long tokenId;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 512)
     private String token;
     @Column(nullable = false)
     private LocalDateTime expirationDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public RefreshToken() {}
+
+    public RefreshToken(User user, String token, LocalDateTime expirationDate) {
+        this.user = user;
+        this.token = token;
+        this.expirationDate = expirationDate;
+    }
 
     //Getters
     public Long getTokenId() {

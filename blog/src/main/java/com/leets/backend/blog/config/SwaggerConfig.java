@@ -13,7 +13,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Leets 6th Blog API Documentation")
-                        .description("블로그 게시물 CRUD 기능에 대한 API 명세서입니다.")
+                        .description("블로그 프로젝트 기능에 대한 API 명세서입니다.")
                         .version("v1.0.0"));
     }
 }
