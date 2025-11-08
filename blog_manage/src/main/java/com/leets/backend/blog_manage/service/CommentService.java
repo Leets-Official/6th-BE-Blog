@@ -11,6 +11,7 @@ import com.leets.backend.blog_manage.exception.ErrorCode;
 import com.leets.backend.blog_manage.repository.CommentRepository;
 import com.leets.backend.blog_manage.repository.PostRepository;
 import com.leets.backend.blog_manage.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder; // [추가]
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -28,12 +29,11 @@ public class CommentService {
         this.userRepository = userRepository;
     }
 
-
-    // PostService와 동일한 임시 사용자 조회 로직
-
-    private User getTemporaryUser() {
-        // 요구사항: 로그인 기능 구현 전이므로 임시 사용자(ID 1L) 사용
-        return userRepository.findById(1L)
+    // --- [수정] ---
+    // SecurityContext에서 인증된 사용자 정보를 가져오는 메소드
+    private User getAuthenticatedUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
@@ -52,8 +52,8 @@ public class CommentService {
     // 1. 댓글 생성
     @Transactional
     public CommentResponse createComment(Long postId, CommentCreateRequest request) {
-        User user = getTemporaryUser(); // 임시 유저 사용
-        Post post = findPostById(postId); // 댓글을 달 게시물 조회
+        User user = getAuthenticatedUser(); // [수정]
+        Post post = findPostById(postId);
 
         Comment comment = new Comment(request.getContent(), user, post);
         Comment savedComment = commentRepository.save(comment);
@@ -62,15 +62,11 @@ public class CommentService {
     }
 
     // 2. 특정 게시물의 댓글 목록 조회 (로그인 불필요)
+    // (이 메소드는 인증이 필요 없으므로 수정 사항 없음)
     @Transactional(readOnly = true)
     public List<CommentResponse> getCommentsByPostId(Long postId) {
-        // 게시물이 존재하는지 먼저 확인
         Post post = findPostById(postId);
-
-        // 게시물 엔티티에서 직접 댓글 목록을 가져옴 (JPA 연관관계 활용)
         List<Comment> comments = post.getComments();
-
-        // Comment 엔티티 리스트를 CommentResponse DTO 리스트로 변환
         return comments.stream()
                 .map(CommentResponse::new)
                 .collect(Collectors.toList());
@@ -79,28 +75,25 @@ public class CommentService {
     // 3. 댓글 수정 (본인만 가능)
     @Transactional
     public CommentResponse updateComment(Long commentId, CommentUpdateRequest request) {
-        User user = getTemporaryUser(); // 임시 유저 (ID: 1L)
+        User user = getAuthenticatedUser(); // [수정]
         Comment comment = findCommentById(commentId);
 
-        // 본인 확인 (임시 유저 ID 1L 기준)
+        // [수정]
         if (!comment.getUser().getId().equals(user.getId())) {
             throw new CustomException(ErrorCode.NO_AUTHORIZATION);
         }
 
         comment.update(request.getContent());
-        // @Transactional 어노테이션으로 인해 'Dirty checking'이 발생하므로
-        // commentRepository.save(comment)를 명시적으로 호출할 필요 없음.
-
         return new CommentResponse(comment);
     }
 
     // 4. 댓글 삭제 (본인만 가능)
     @Transactional
     public void deleteComment(Long commentId) {
-        User user = getTemporaryUser(); // 임시 유저 (ID: 1L)
+        User user = getAuthenticatedUser(); // [수정]
         Comment comment = findCommentById(commentId);
 
-        // 본인 확인 (임시 유저 ID 1L 기준)
+        // [수정]
         if (!comment.getUser().getId().equals(user.getId())) {
             throw new CustomException(ErrorCode.NO_AUTHORIZATION);
         }

@@ -10,3 +10,9 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+
+
+jwt:
+  secret: "a-very-long-and-secure-secret-key-for-this-project-replace-it-later" # 32바이트 이상의 복잡한 문자열 사용 권장
+  access-token-expiration: 3600000 # 1시간 (밀리초 단위)
+  refresh-token-expiration: 604800000 # 7일 (밀리초 단위)
