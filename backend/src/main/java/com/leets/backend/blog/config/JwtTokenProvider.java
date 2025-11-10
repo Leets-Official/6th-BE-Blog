@@ -63,6 +63,14 @@ public class JwtTokenProvider {
         return Long.valueOf(parse(token).getBody().getSubject());
     }
 
+    public String getRole(String token) {
+        return parse(token).getBody().get("role", String.class);
+    }
+
+    public String getEmail(String token) {
+        return parse(token).getBody().get("email", String.class);
+    }
+
     public boolean isExpired(String token){
         return parse(token).getBody().getExpiration().before(new Date());
     }

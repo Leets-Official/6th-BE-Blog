@@ -25,18 +25,18 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthService(UserRepository userRepository,
-                       RefreshTokenRepository refreshTokenRepository,
                        PasswordEncoder passwordEncoder,
-                       JwtTokenProvider jwtTokenProvider) {
+                       JwtTokenProvider jwtTokenProvider,
+                       RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.refreshTokenService = refreshTokenService;
     }
 
     // 회원가입 - 이메일 전용
@@ -73,102 +73,52 @@ public class AuthService {
         String access = jwtTokenProvider.generateAccessToken(user.getUserId(), user.getEmail(), user.getRole());
 
         // refresh 발급 & 저장
-        String refresh = jwtTokenProvider.generateRefreshToken(user.getUserId());
+        String refresh = refreshTokenService.issueRefreshToken(user);
 
-        // refresh 토큰 저장
-        RefreshToken token = refreshTokenRepository.findByUser_UserId(user.getUserId())
-                .orElseGet(RefreshToken::new);
-        token.setUser(user);
-        token.setToken(refresh);
-        token.setExpiresAt(LocalDateTime.now().plusDays(14));
-        token.setRevoked(false);
-        refreshTokenRepository.save(token);
 
         // refresh 쿠키 세팅 (HttpOnly, Secure)
-        Cookie cookie = new Cookie("REFRESH_TOKEN", refresh);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");         // 필요시 "/auth"로 좁히기
-        cookie.setMaxAge(14*24*60*60);
-        res.addCookie(cookie);
-
-        res.setHeader("Authorization", "Bearer " + access);
+        refreshTokenService.addRefreshTokenCookie(refresh, res);
 
         return AuthResponse.of(access, user);
     }
 
     @Transactional
     public AuthResponse refresh(HttpServletRequest req, HttpServletResponse res){
-        String refresh = extractRefreshCookie(req)
-                .orElseThrow(() -> new AppException(ErrorCode.VALIDATION_ERROR, "refresh할 쿠키가 존재하지 않습니다."));
+        // 1. 쿠키에서 refresh 추출
+        String refresh = refreshTokenService.extractRefreshTokenFromCookie(req)
+                .orElseThrow(() ->
+                        new AppException(ErrorCode.VALIDATION_ERROR, "no refresh cookie"));
 
-        // DB에 존재 및 revoked = 0 인지 확인
-        RefreshToken stored = refreshTokenRepository.findByToken(refresh)
-                .orElseThrow(() -> new AppException(ErrorCode.VALIDATION_ERROR, "refresh가 존재하지 않습니다."));
+        // 2. DB에서 검증
+        RefreshToken stored = refreshTokenService.validateRefreshToken(refresh);
+        User user = stored.getUser();
 
-        if (stored.isRevoked() || stored.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new AppException(ErrorCode.VALIDATION_ERROR, "토큰이 이미 사용되었거나 만료되었습니다.");
-        }
+        // 3. 로테이션: 같은 엔티티로 새 토큰으로 교체
+        String newRefresh = refreshTokenService.rotateRefreshToken(stored);
 
-        Long userId = jwtTokenProvider.getUserId(refresh);
-        User u = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        // 4. 쿠키 갱신
+        refreshTokenService.addRefreshTokenCookie(newRefresh, res);
 
-        // 리프레시 로테이션: 새 refresh 재발급 + 기존 revoked=true
-        String newRefresh = jwtTokenProvider.generateRefreshToken(u.getUserId());
-        stored.setToken(newRefresh);
-        stored.setExpiresAt(LocalDateTime.now().plusDays(14));
-        stored.setRevoked(false);
-        refreshTokenRepository.save(stored);
-
-        // 쿠키 갱신
-        Cookie cookie = new Cookie("REFRESH_TOKEN", newRefresh);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false); // 배포시에는 true로 바꿔야됨
-        cookie.setPath("/");
-        cookie.setMaxAge(14*24*60*60); //14일
-        res.addCookie(cookie);
-
-        // access 새로 발급
-        String access = jwtTokenProvider.generateAccessToken(u.getUserId(), u.getEmail(), u.getRole());
+        // 5. 새 access 발급
+        String access = jwtTokenProvider.generateAccessToken(
+                user.getUserId(), user.getEmail(), user.getRole()
+        );
         res.setHeader("Authorization", "Bearer " + access);
-        return AuthResponse.of(access, u);
+
+        return AuthResponse.of(access, user);
     }
 
     @Transactional
     public void logout(HttpServletRequest req, HttpServletResponse res){
-        // 쿠키에서 refresh token 추출
-        String refresh = extractRefreshCookie(req)
-                .orElseThrow(() -> new AppException(ErrorCode.VALIDATION_ERROR, "refresh할 쿠키가 존재하지 않습니다."));
+        // 1. 쿠키에서 refresh 추출
+        String refresh = refreshTokenService.extractRefreshTokenFromCookie(req)
+                .orElseThrow(() ->
+                        new AppException(ErrorCode.VALIDATION_ERROR, "no refresh cookie"));
 
-        // DB에서 해당 토큰 검색
-        RefreshToken stored = refreshTokenRepository.findByToken(refresh)
-                .orElseThrow(() -> new AppException(ErrorCode.VALIDATION_ERROR, "토큰이 검색되지 않습니다."));
+        // 2. 토큰 revoke
+        refreshTokenService.revokeRefreshToken(refresh);
 
-        // 이미 사용되었거나 만료되었으면 예외
-        if (stored.isRevoked() || stored.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new AppException(ErrorCode.VALIDATION_ERROR, "토큰이 이미 사용되었거나 만료되었습니다.");
-        }
-
-        // 현재 토큰을 무효화(revoke)
-        stored.setRevoked(true);
-        refreshTokenRepository.save(stored);
-
-        // 브라우저 쿠키 삭제
-        Cookie cookie = new Cookie("REFRESH_TOKEN", null);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false); // 배포시에는 true로 바꿔야됨
-        cookie.setPath("/");
-        cookie.setMaxAge(0); // 즉시 만료
-        res.addCookie(cookie);
-    }
-
-    private Optional<String> extractRefreshCookie(HttpServletRequest req){
-        Cookie[] cs = req.getCookies();
-        if (cs == null) return Optional.empty();
-        for (Cookie c : cs) {
-            if ("REFRESH_TOKEN".equals(c.getName())) return Optional.ofNullable(c.getValue());
-        }
-        return Optional.empty();
+        // 3. 쿠키 삭제
+        refreshTokenService.clearRefreshTokenCookie(res);
     }
 }

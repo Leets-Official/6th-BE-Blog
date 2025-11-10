@@ -21,10 +21,9 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwt;
-    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtTokenProvider jwt, UserRepository userRepository) {
-        this.jwt = jwt; this.userRepository = userRepository;
+    public JwtAuthenticationFilter(JwtTokenProvider jwt) {
+        this.jwt = jwt;
     }
 
     @Override
@@ -36,12 +35,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = auth.substring(7);
             try {
                 Long userId = jwt.getUserId(token);
-                User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new UserNotFoundException(userId));
+                String role = jwt.getRole(token); // JWT에서 바로 읽기
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                user.getUserId(), null, List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
+                                userId, null, List.of(new SimpleGrantedAuthority("ROLE_" + role))
                         );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (JwtException | IllegalArgumentException e) {
@@ -54,6 +52,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String p = request.getServletPath();
-        return p.startsWith("/auth"); // /auth/** 는 인증필터 스킵
+        return p.startsWith("/auth"); // 로그인/회원가입 등은 필터 제외
     }
 }
