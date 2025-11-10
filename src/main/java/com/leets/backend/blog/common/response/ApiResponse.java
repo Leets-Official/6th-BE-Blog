@@ -22,4 +22,8 @@ public record ApiResponse<T>(
         return new ApiResponse<>(e.getErrorCode().getHttpStatus(), false, null,
                 ExceptionDto.of(e.getErrorCode(), e.getErrorMsg()));
     }
+
+    public static <T> ApiResponse<T> success(T data) {
+        return new ApiResponse<>(HttpStatus.OK, true, data, null);
+    }
 }

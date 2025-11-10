@@ -7,9 +7,9 @@ import com.leets.backend.blog.post.controller.dto.request.PostUpdateRequest;
 import com.leets.backend.blog.post.controller.dto.response.PostResponse;
 import com.leets.backend.blog.post.controller.dto.response.PostSummaryResponse;
 import com.leets.backend.blog.post.entity.Post;
-import com.leets.backend.blog.post.entity.User;
+import com.leets.backend.blog.user.entity.User;
 import com.leets.backend.blog.post.repository.PostRepository;
-import com.leets.backend.blog.post.repository.UserRepository;
+import com.leets.backend.blog.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,9 +43,7 @@ public class PostService {
     }
 
     // 게시글 생성
-    public PostResponse createPost(PostRequest postRequest) {
-        User user = userRepository.findByEmail("test@example.com")
-                .orElseGet(() -> userRepository.save(new User("test@example.com", "1234", "더미유저")));
+    public PostResponse createPost(PostRequest postRequest, User user) {
 
         Post post = Post.of(postRequest.getTitle(), postRequest.getContent(), user);
         Post saved = postRepository.save(post);
@@ -54,17 +52,12 @@ public class PostService {
     }
 
     // 게시글 수정
-    public PostResponse updatePost(Long postId, Long userId, PostUpdateRequest request) {
+    public PostResponse updatePost(Long postId, PostUpdateRequest request, User user) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND, "해당 게시글이 존재하지 않습니다."));
-        // 회원 기능 생기면 삭제, 임시 기능
-        if (userId == 0) {
-            User dummy = new User("test@example.com", "1234", "더미유저");
-            dummy = userRepository.save(dummy);
-            userId = dummy.getId();
-        }
 
-        if (!post.getUser().getId().equals(userId)) {
+        // 게시글 작성자와 현재 로그인 유저가 일치하지 않으면 수정 불가
+        if (!post.getUser().getId().equals(user.getId())) {
             throw new CustomException(ErrorCode.NO_UPDATE, "게시글 수정 권한이 없습니다.");
         }
 
@@ -73,11 +66,11 @@ public class PostService {
     }
 
     // 게시글 삭제
-    public void deletePost(Long postId, Long userId) {
+    public void deletePost(Long postId, User user) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND, "해당 게시글이 존재하지 않습니다."));
 
-        if (!post.getUser().getId().equals(userId)) {
+        if (!post.getUser().getId().equals(user.getId())) {
             throw new CustomException(ErrorCode.NO_DELETE, "게시글 삭제 권한이 없습니다.");
         }
 

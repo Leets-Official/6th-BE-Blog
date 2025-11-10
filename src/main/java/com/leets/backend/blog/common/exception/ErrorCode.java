@@ -9,12 +9,18 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다."),
 
     // 게시글 관련
-    POST_NOT_FOUND(1023, HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
-    NO_UPDATE(1002, HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),
-    NO_DELETE(1003, HttpStatus.FORBIDDEN, "게시글 삭제 권한이 없습니다."),
+    NO_UPDATE(1101, HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),
+    NO_DELETE(1102, HttpStatus.FORBIDDEN, "게시글 삭제 권한이 없습니다."),
+    POST_NOT_FOUND(1103, HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
 
     // 유저 관련
     USER_NOT_FOUND(1001, HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."),
+    DUPLICATED_EMAIL(1002, HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
+    DUPLICATED_NICKNAME(1003, HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다."),
+
+    // 인증 관련
+    LOGIN_USER_NOT_FOUND(2001, HttpStatus.BAD_REQUEST, "등록되지 않은 이메일입니다."),
+    LOGIN_INVALID_PASSWORD(2002, HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
 
     // 댓글 관련
     COMMENT_NOT_FOUND(3001, HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),

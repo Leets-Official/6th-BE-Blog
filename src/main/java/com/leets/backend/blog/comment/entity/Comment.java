@@ -1,7 +1,7 @@
 package com.leets.backend.blog.comment.entity;
 
 import com.leets.backend.blog.post.entity.Post;
-import com.leets.backend.blog.post.entity.User;
+import com.leets.backend.blog.user.entity.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
