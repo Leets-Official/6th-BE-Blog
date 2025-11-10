@@ -1,5 +1,6 @@
 package com.leets.backend.blog.entity;
 
+import com.leets.backend.blog.dto.kakao.KakaoAccount;
 import com.leets.backend.blog.enums.LoginMethod;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -58,6 +59,39 @@ public class User implements UserDetails {
         this.birthdate = birthdate;
         this.roles = (roles == null || roles.isEmpty()) ? "ROLE_USER" : roles;
         this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    // 카카오 회원가입용
+    public static User createKakaoUser(String kakaoId, String email, String name, String nickname, String profileImageUrl) {
+        User user = new User();
+        user.kakaoId = kakaoId;
+        user.email = email;
+
+        // 카카오 닉네임을 임시로 저장
+        user.name = name;
+        user.nickname = nickname;
+
+        user.profileImage = profileImageUrl;
+        user.loginMethod = LoginMethod.KAKAO;
+        user.roles = "ROLE_USER";
+        user.createdAt = LocalDateTime.now();
+        user.updatedAt = LocalDateTime.now();
+        user.password = null; // 카카오 유저는 비밀번호 없음
+
+        return user;
+    }
+
+    // 카카오 정보로 프로필 업데이트
+    public void updateKakaoProfile(KakaoAccount kakaoAccount) {
+        if (kakaoAccount.getProfile() != null) {
+            this.nickname = kakaoAccount.getProfile().getNickname();
+            this.profileImage = kakaoAccount.getProfile().getProfileImageUrl();
+        }
+        if (kakaoAccount.getEmail() != null) {
+            this.email = kakaoAccount.getEmail();
+        }
+
         this.updatedAt = LocalDateTime.now();
     }
 

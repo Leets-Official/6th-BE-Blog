@@ -15,7 +15,10 @@ public enum ErrorCode {
 
     // Spring Security
     AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "인증에 실패했습니다."),
-    ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다.");
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
+
+    // 428 Precondition Required (새로운 에러 코드)
+    KAKAO_EMAIL_NOT_CONSENTED(HttpStatus.PRECONDITION_REQUIRED, "카카오 로그인 시 이메일 동의는 필수입니다. 다시 시도해 주세요.");
 
     private final HttpStatus status;
     private final String message;

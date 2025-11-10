@@ -30,3 +30,10 @@ jwt:
   secret: "W2Bxf8LRrTei5thxLZbG4cQi/lDeXogj9P3n+FJmNRga8WHiRdph1F9o/lLQT7epnovSQGMfAsmwX4UngWp+ng=="
   access-token-expiration-ms: 3600000  # 1시간
   refresh-token-expiration-ms: 604800000 # 7일
+
+# Kakao
+kakao:
+  client-id: 1000bf8964ec857718ba58aceba1c155
+  redirect-uri: http://localhost:8080/auth/login/kakao
+  token-uri: https://kauth.kakao.com/oauth/token
+  user-info-uri: https://kapi.kakao.com/v2/user/me
