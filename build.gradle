@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.6'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.3.1' // 최신 안정 버전으로 조정
+    id 'io.spring.dependency-management' version '1.1.5' // 버전 조정
     id 'org.cyclonedx.bom' version '2.3.0'
 }
 
@@ -20,20 +20,34 @@ repositories {
 }
 
 dependencies {
+    // Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Spring Security 기본 기능
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // ⭐ 카카오 로그인 (OAuth 2.0) 구현을 위한 필수 의존성 추가 ⭐
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // Data (JPA, MySQL)
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.mysql:mysql-connector-j'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
-    // JJWT: JWT(JSON Web Token)를 생성하고 검증하기 위한 라이브러리
+
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // OpenAPI/Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0' // 최신 안정 버전으로 조정
+
+    // JWT (JJWT)
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {

@@ -2,10 +2,12 @@ server:
   port: 8080
 
 spring:
+  # 데이터베이스 설정
   datasource:
     url: jdbc:mysql://localhost:3306/blog?serverTimezone=Asia/Seoul
     username: root
     password: 1234
+  # JPA 설정
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,6 +17,31 @@ spring:
     show-sql: true
     open-in-view: false
 
+  # Spring Security (OAuth2 Client) 설정
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 385723754660a385ed7ea250b98795e1 # REST API 키
+            client-authentication-method: post
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+            scope:
+              - profile_nickname
+              - profile_image
+
+            client-name: Kakao
+
+        provider:
+          # 카카오 Oauth2 Provider 설정
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id # 카카오 사용자 식별자 필드
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -23,18 +50,8 @@ springdoc:
     version: "v1.0.0"
     description: "블로그 프로젝트 API 명세서입니다."
 
-# ==================================
 # JWT (JSON Web Token) 설정
-# ==================================
 jwt:
-  # HMAC-SHA 알고리즘을 위한 비밀키. Base64로 인코딩된 64바이트 이상의 문자열 권장
-  # 예시: (테스트용)
   secret: "eW91ci1zdXBlci1zdHJvbmctc2VjcmV0LWtleS1iYXNlNjQtZW5jb2RlZA=="
-
-  # Access Token 만료 시간 (밀리초 단위)
-  # 30분 = 30 * 60 * 1000 = 1800000
   access-token-expiration-ms: 1800000
-
-  # Refresh Token 만료 시간 (밀리초 단위)
-  # 7일 = 7 * 24 * 60 * 60 * 1000 = 604800000
   refresh-token-expiration-ms: 604800000

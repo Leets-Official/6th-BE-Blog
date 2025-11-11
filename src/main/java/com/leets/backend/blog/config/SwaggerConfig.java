@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 
-@OpenAPIDefinition( // 3. 애너테이션 추가
+@OpenAPIDefinition(
         servers = @Server(url = "http://localhost:8080")
 )
 @Configuration
