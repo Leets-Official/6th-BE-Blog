@@ -19,7 +19,6 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // authenticationManager는 현재 사용하지 않으므로 제거(필요하면 다시 추가)
     public AuthService(UserRepository userRepository,
                        RefreshTokenRepository refreshTokenRepository,
                        PasswordEncoder passwordEncoder,
@@ -66,8 +65,6 @@ public class AuthService {
 
         tokenEntity.setToken(refreshTokenString);
         tokenEntity.setUser(user);
-
-        // jwtTokenProvider.getExpiration(...)이 Date를 반환한다고 가정
         tokenEntity.setExpiryDate(
                 Instant.ofEpochMilli(jwtTokenProvider.getExpiration(refreshTokenString).getTime())
         );

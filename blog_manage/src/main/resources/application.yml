@@ -25,3 +25,11 @@ jwt:
   secret: "ChangeThisToASuperLongRandomSecretKeyForJWT1234567890!@#ABCD"
   access-token-validity: 900000         # 15분 (단위: 밀리초)
   refresh-token-validity: 1209600000    # 14일 (단위: 밀리초)
+
+logging:
+  level:
+    root: INFO
+    org.springframework: DEBUG
+    org.hibernate.SQL: DEBUG
+    com.leets.backend.blog: DEBUG
+    org.springframework.security: DEBUG

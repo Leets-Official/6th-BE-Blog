@@ -29,6 +29,7 @@ public class JwtTokenProvider {
     public String createAccessToken(String subject, String role) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + accessTokenValidityMs);
+
         return Jwts.builder()
                 .setSubject(subject)
                 .claim("role", role)
@@ -41,6 +42,7 @@ public class JwtTokenProvider {
     public String createRefreshToken(String subject) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + refreshTokenValidityMs);
+
         return Jwts.builder()
                 .setSubject(subject)
                 .setIssuedAt(now)
@@ -49,6 +51,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public String generateToken(String subject) {
+        // 기본적으로 USER 권한으로 AccessToken 생성
+        return createAccessToken(subject, "ROLE_USER");
+    }
+
+    // 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(key).build().parseClaimsJws(token);
@@ -58,12 +66,21 @@ public class JwtTokenProvider {
         }
     }
 
+    // 토큰에서 이메일 추출
     public String getSubject(String token) {
-        return Jwts.parser().setSigningKey(key).
-                build().parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
+    // 토큰 만료시간 추출
     public Date getExpiration(String token) {
-        return Jwts.parser().setSigningKey(key).build().parseClaimsJws(token).getBody().getExpiration();
+        return Jwts.parser().setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
     }
 }

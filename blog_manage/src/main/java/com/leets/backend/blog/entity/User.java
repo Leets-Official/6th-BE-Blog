@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users") // 'user' 대신 'users' 권장
+@Table(name = "users")
 public class User {
 
     @Id
@@ -21,15 +21,19 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
-    // password는 OAuth 사용자 등에서 null일 수 있으므로 nullable = true 허용
     @Column(nullable = true)
     private String password;
 
     @Column(nullable = true)
     private String introduction;
 
+    // 소셜 로그인 식별자
+    @Column(nullable = true, unique = true)
+    private String socialId;
+
+    // 로그인 제공자 구분
     @Column(nullable = true)
-    private String kakaoId;
+    private String provider;
 
     @Column(nullable = true)
     private LocalDateTime birth;
@@ -73,7 +77,8 @@ public class User {
     public String getNickname() { return nickname; }
     public String getPassword() { return password; }
     public String getIntroduction() { return introduction; }
-    public String getKakaoId() { return kakaoId; }
+    public String getSocialId() { return socialId; }
+    public String getProvider() { return provider; }
     public LocalDateTime getBirth() { return birth; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
@@ -85,7 +90,8 @@ public class User {
     public void setNickname(String nickname) { this.nickname = nickname; }
     public void setPassword(String password) { this.password = password; }
     public void setIntroduction(String introduction) { this.introduction = introduction; }
-    public void setKakaoId(String kakaoId) { this.kakaoId = kakaoId; }
+    public void setSocialId(String socialId) { this.socialId = socialId; }
+    public void setProvider(String provider) { this.provider = provider; }
     public void setBirth(LocalDateTime birth) { this.birth = birth; }
     public void setRole(String role) { this.role = role; }
 
