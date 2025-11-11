@@ -13,15 +13,19 @@ public class UserResponseDTO {
     private String nickname;
     private String introduction;
 
-    public UserResponseDTO(User user) {
-        this.isKakaoLogin = user.getIsKakaoLogin();
-        this.profileImgUrl = user.getProfileImgUrl();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        this.name = user.getName();
-        this.birthDate = user.getBirthDate();
-        this.nickname = user.getNickname();
-        this.introduction = user.getIntroduction();
+    public static UserResponseDTO toDTO(User user) {
+        UserResponseDTO dto = new UserResponseDTO();
+
+        dto.isKakaoLogin = user.getIsKakaoLogin();
+        dto.profileImgUrl = user.getProfileImgUrl();
+        dto.email = user.getEmail();
+        dto.password = user.getPassword();
+        dto.name = user.getName();
+        dto.birthDate = user.getBirthDate();
+        dto.nickname = user.getNickname();
+        dto.introduction = user.getIntroduction();
+
+        return dto;
     }
 
     public Boolean getKakaoLogin() {

@@ -57,11 +57,11 @@ public class User {
     protected User() {}
 
     // 카카오 & 이메일 회원가입
-    public static User createUser(UserCreateRequestDTO dto){
+    public static User createUser(UserCreateRequestDTO dto, String encodePassword){
         User user = new User();
         user.name = dto.getName();
         user.email = dto.getEmail();
-        user.password = dto.getPassword();
+        user.password = encodePassword;
         user.isKakaoLogin = dto.getIsKakaoLogin();
         user.kakaoId = dto.getIsKakaoLogin() ? dto.getKakaoId() : null;
         user.nickname = dto.getNickname();

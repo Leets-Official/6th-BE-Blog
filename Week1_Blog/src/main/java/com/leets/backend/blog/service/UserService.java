@@ -21,7 +21,7 @@ public class UserService {
         User user = repository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return new UserResponseDTO(user);
+        return UserResponseDTO.toDTO(user);
     }
 
     public UserResponseDTO updateUserByUserId(Long userId, UserUpdateRequestDTO dto){
@@ -39,14 +39,6 @@ public class UserService {
         );
 
         User updatedUser = repository.save(user);
-        return new UserResponseDTO(updatedUser);
-    }
-
-    public UserResponseDTO createUser(UserCreateRequestDTO dto){
-        User newUser = User.createUser(dto);
-
-        User savedUser = repository.save(newUser);
-
-        return new UserResponseDTO(savedUser);
+        return UserResponseDTO.toDTO(updatedUser);
     }
 }

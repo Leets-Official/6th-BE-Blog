@@ -22,18 +22,6 @@ public class PostDetailResponseDTO {
     private LocalDateTime updateDate;
     private Boolean isMyPost;
 
-    //public PostDetailResponseDTO(Post post, User user, List<CommentResponseDTO> comments, Long currentUserId) {
-    //    this.postId = post.getPostId();
-    //    this.nickname = user.getNickname();
-    //    this.title = post.getTitle();
-    //    this.content = post.getContent();
-    //    this.comments = comments;
-    //    this.isMyPost = StringUtil.isNullOrEmpty(currentUserId.toString()) ? false :
-    //            post.getUser().getUserId().equals(currentUserId);
-    //    this.createDate = post.getCreateDate();
-    //    this.updateDate = post.getUpdateDate();
-    //}
-
     public static PostDetailResponseDTO toDto(Post post, User user, List<CommentResponseDTO> comments, Long currentUserId){
         var dto = new PostDetailResponseDTO();
 

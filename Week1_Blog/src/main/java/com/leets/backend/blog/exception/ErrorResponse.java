@@ -3,6 +3,8 @@ package com.leets.backend.blog.exception;
 import java.time.LocalDateTime;
 
 public class ErrorResponse {
+
+    private final Boolean success = false;
     // HTTP 상태 코드
     private final  int status; // HTTP 상태 코드
     private final String message;
@@ -15,6 +17,10 @@ public class ErrorResponse {
         this.message = message;
         this.path = path;
         this.timestamp = LocalDateTime.now();
+    }
+
+    public Boolean getSuccess() {
+        return success;
     }
 
     public int getStatus() {

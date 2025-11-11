@@ -1,6 +1,5 @@
 package com.leets.backend.blog.controller;
 
-import com.leets.backend.blog.dto.request.UserCreateRequestDTO;
 import com.leets.backend.blog.dto.request.UserUpdateRequestDTO;
 import com.leets.backend.blog.dto.response.UserResponseDTO;
 import com.leets.backend.blog.service.UserService;
@@ -38,14 +37,5 @@ public class UserController {
             @Valid  @RequestBody UserUpdateRequestDTO dto){
 
         return service.updateUserByUserId(userId, dto);
-    }
-
-    @Operation(
-            summary = "신규 회원 생성",
-            description = "회원가입을 성공적으로 마친 회원의 정보에 따라 회원 새로 생성"
-    )
-    @PostMapping
-    public UserResponseDTO createUser(@Valid @RequestBody UserCreateRequestDTO dto){
-        return service.createUser(dto);
     }
 }
