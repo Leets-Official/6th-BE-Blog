@@ -41,12 +41,12 @@ public class User implements UserDetails {
     private Provider provider; // EMAIL or KAKAO
     @Column(nullable=false)
     private LocalDateTime createdAt;
-    @Column
+    @Column(nullable=true)
     private LocalDateTime updatedAt;
     @Column
     private String providerUserId; // KAKAO
     @Column
-    private String passwordHash;   // EMAIL
+    private String password;   // EMAIL
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
@@ -67,7 +67,7 @@ public class User implements UserDetails {
         ref.setRevoked(false);
     }
 
-    public static User createKakao(UserStatus status, String email, String name, LocalDate birthdate,
+    public static User createUserWithKakao(String email, String name, LocalDate birthdate,
                                    String nickname, String intro, String profileImage, Provider provider,
                                    String providerUserId) {
         User user = new User();
@@ -84,9 +84,8 @@ public class User implements UserDetails {
         return user;
     }
 
-    public static User createEmail(UserStatus status, String email, String name, LocalDate birthdate,
-                                   String nickname, String intro, String profileImage,
-                                   Provider provider, String passwordHash) {
+    public static User createUserWithEmail(String email, String name, LocalDate birthdate,
+                                   String nickname, String intro, String profileImage, String password) {
         User user = new User();
         user.status = UserStatus.ACTIVE;
         user.email = email;
@@ -97,18 +96,18 @@ public class User implements UserDetails {
         user.profileImage = profileImage;
         user.provider = Provider.EMAIL;
         user.createdAt = LocalDateTime.now();
-        user.passwordHash = passwordHash;
+        user.password = password;
         return user;
     }
 
-    public void updateEmailUser(String nickname, String intro, String email, String passwordHash, String name,
+    public void updateEmailUser(String nickname, String intro, String email, String password, String name,
                                 LocalDate birthdate) {
         this.nickname = nickname;
         this.intro = intro;
         this.email = email;
         this.name = name;
         this.birthdate = birthdate;
-        this.passwordHash = passwordHash;
+        this.password = password;
         this.updatedAt = LocalDateTime.now();
     }
 
@@ -128,16 +127,11 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
-        return "";
-    }
+    public String getPassword() { return password; }
 
     @Override
-    public String getUsername() {
-        return "";
-    }
+    public String getUsername() { return id.toString(); }
 
-    public String getEmail() { return email;
-    }
+    public String getEmail() { return email; }
 }
 

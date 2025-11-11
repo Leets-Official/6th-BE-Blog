@@ -1,6 +1,8 @@
 package leets.blogapplication.domain;
 
 import jakarta.persistence.*;
+
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,11 +34,17 @@ public class RefreshToken {
     public void setUser(User user) { this.user = user; }
     public void setRevoked(boolean revoked) { this.revoked = revoked; }
 
-    public RefreshToken(String token, LocalDateTime expiresAt, LocalDateTime issuedAt, boolean revoked) {
+    public RefreshToken(User user, String token, LocalDateTime expiresAt, LocalDateTime issuedAt, boolean revoked) {
         this.refreshToken = token;
         this.expiresAt = expiresAt;
         this.issuedAt = issuedAt;
         this.revoked = revoked;
+        this.user = user;
+    }
+
+    public static RefreshToken createRefreshToken(String token, User user){
+        RefreshToken ref = new RefreshToken(user, token, LocalDateTime.now().plusDays(7), LocalDateTime.now(), false);
+        return ref;
     }
 
     protected RefreshToken() {}
