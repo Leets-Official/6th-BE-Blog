@@ -16,7 +16,14 @@ app:
       secret: "M3ahFr5U7AzblH6F+cijLxmPpywPZAT0auJf56dTULw="
       access-exp-min: 15
       refresh-exp-days: 14
-  server:
-    servlet:
-      session:
-        tracking-modes: cookie
+
+server:
+   servlet:
+    session:
+      tracking-modes: cookie
+
+kakao:
+  client-id: "6c8793aaac1ac04b10ae4478880e38a3"
+  redirect-uri: "http://localhost:8080/auth/kakao/callback"
+  token-uri: "https://kauth.kakao.com/oauth/token"
+  user-info-uri: "https://kapi.kakao.com/v2/user/me"
