@@ -1,8 +1,6 @@
 package leets.blogapplication.service.auth.kakao;
 
-import leets.blogapplication.domain.User;
 import leets.blogapplication.domain.UserSocial;
-import leets.blogapplication.repository.UserRepository;
 import leets.blogapplication.repository.UserSocialRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,12 +10,10 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

@@ -18,11 +18,9 @@ import java.time.Duration;
 public class KakaoLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final TokenService tokenService;
-    private final RefreshTokenService refreshService;
 
-    public KakaoLoginSuccessHandler(TokenService tokenService, RefreshTokenService refreshService) {
+    public KakaoLoginSuccessHandler(TokenService tokenService) {
         this.tokenService = tokenService;
-        this.refreshService = refreshService;
     }
 
     @Override
