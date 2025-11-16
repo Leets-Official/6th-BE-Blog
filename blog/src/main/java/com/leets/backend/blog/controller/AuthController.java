@@ -70,6 +70,26 @@ public class AuthController {
                 .body(ApiResponse.onSuccess(HttpStatus.OK, "이메일 로그인 성공", responseBody));
     }
 
+    // 카카오 로그인
+    @Operation(summary = "카카오 로그인/회원가입", description = "카카오 인가 코드를 받아 로그인/회원가입 처리 후 JWT 발급합니다.")
+    @GetMapping("/login/kakao")
+    public ResponseEntity<ApiResponse<TokenResponseDTO>> kakaoLogin(
+            @RequestParam("code") String code
+    ) throws AuthException {
+        // 인가 코드로 카카오 로그인/회원가입 처리
+        TokenResponseDTO tokens = authService.loginWithKakao(code);
+
+        // Refresh Token을 HttpOnly 쿠키로 설정
+        ResponseCookie refreshTokenCookie = createRefreshTokenCookie(tokens.getRefreshToken());
+
+        // Access Token만 응답 본문에 포함
+        TokenResponseDTO responseBody = new TokenResponseDTO(tokens.getAccessToken());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .body(ApiResponse.onSuccess(HttpStatus.OK, "카카오 로그인 성공", responseBody));
+    }
+
     // 로그아웃
     @Operation(summary = "로그아웃", description = "Refresh Token을 만료시킵니다.")
     @PostMapping("/logout")
@@ -81,13 +101,7 @@ public class AuthController {
         authService.logout(refreshToken);
 
         // 클라이언트의 쿠키를 삭제하기 위한 만료 쿠키 직접 생성 (CookieUtil 대체)
-        ResponseCookie clearCookie = ResponseCookie.from("refreshToken", "")
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
-                .path("/auth")
-                .maxAge(0) // 즉시 만료
-                .build();
+        ResponseCookie clearCookie = createClearCookie();
 
         // 헤더에 만료 쿠키를 설정하여 응답
         return ResponseEntity.ok()
@@ -107,5 +121,27 @@ public class AuthController {
         return ResponseEntity.ok(
                 ApiResponse.onSuccess(HttpStatus.OK, "액세스 토큰 재발급 성공", responseBody)
         );
+    }
+
+    // Refresh Token 쿠키 생성
+    private ResponseCookie createRefreshTokenCookie(String refreshToken) {
+        return ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true) // HTTPS
+                .sameSite("Strict") // CSRF 방어
+                .path("/auth") // 쿠키 사용 경로 제한 (/auth/refresh, /auth/logout)
+                .maxAge(jwtProperties.getRefreshTokenExpirationMs() / 1000) // 만료 시간(초)
+                .build();
+    }
+
+    // 쿠키 클리어
+    private ResponseCookie createClearCookie() {
+        return ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/auth")
+                .maxAge(0) // 즉시 만료
+                .build();
     }
 }
