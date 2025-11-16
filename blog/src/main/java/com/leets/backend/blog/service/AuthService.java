@@ -96,7 +96,7 @@ public class AuthService {
         RefreshToken refreshToken = new RefreshToken(
                 user,
                 refreshTokenString,
-                LocalDateTime.now().plusNanos(refreshTokenExpirationMs / 1000) // ms to ns and add
+                LocalDateTime.now().plusNanos(refreshTokenExpirationMs * 1000) // ms to ns and add
         );
         refreshTokenRepository.save(refreshToken);
 
@@ -167,7 +167,7 @@ public class AuthService {
         RefreshToken refreshToken = new RefreshToken(
                 user,
                 refreshTokenString,
-                LocalDateTime.now().plusNanos(refreshTokenExpirationMs / 1000)
+                LocalDateTime.now().plusNanos(refreshTokenExpirationMs * 1000)
         );
         refreshTokenRepository.save(refreshToken);
 
