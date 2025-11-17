@@ -1,5 +1,7 @@
 package com.leets.backend.blog.exception;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * 서비스에서 사용되는 에러 코드와 HTTP 상태 매핑 정의
  */
@@ -10,6 +12,7 @@ public enum ErrorCode {
     COMMENT_PERMISSION_DENIED(403, "COMMENT_PERMISSION_DENIED"),
     VALIDATION_ERROR(400, "VALIDATION_ERROR"),
     INTERNAL_ERROR(500, "INTERNAL_ERROR");
+
 
     private final int status;
     private final String code;
