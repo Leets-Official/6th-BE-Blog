@@ -3,6 +3,7 @@ package com.leets.backend.blog.service;
 import com.leets.backend.blog.config.KakaoOAuthProperties;
 import com.leets.backend.blog.dto.kakao.KakaoTokenResponse;
 import com.leets.backend.blog.dto.kakao.KakaoUserResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -13,10 +14,13 @@ import org.springframework.web.client.RestTemplate;
 public class KakaoOAuthClient {
 
     private final KakaoOAuthProperties props;
-    private final RestTemplate restTemplate = new RestTemplate();
 
-    public KakaoOAuthClient(KakaoOAuthProperties props) {
+    @Autowired
+    private final RestTemplate restTemplate;
+
+    public KakaoOAuthClient(KakaoOAuthProperties props, RestTemplate restTemplate) {
         this.props = props;
+        this.restTemplate = restTemplate; //주입받은 RestTemplate 사용
     }
 
     /** 인가코드로 카카오 access_token 요청 */

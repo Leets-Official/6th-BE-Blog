@@ -145,7 +145,7 @@ public class AuthService {
         String provider = "kakao";
         String providerUserId = String.valueOf(kakaoId);
 
-        // 3. 우리 DB에서 해당 카카오 유저 조회 (없으면 회원가입)
+        // 3. DB에서 해당 카카오 유저 조회 (없으면 회원가입)
         User user = userRepository
                 .findByProviderAndProviderUserId(provider, providerUserId)
                 .orElseGet(() -> {
@@ -162,10 +162,7 @@ public class AuthService {
                     return userRepository.save(u);
                 });
 
-        // (선택) 이메일 중복 정책을 엄격하게 하고 싶으면:
-        // - 이미 email로 가입한 유저가 있는데 provider=email 이면 에러 처리 등도 가능
-
-        // 4) 우리 서버 JWT access / refresh 발급 (이메일 로그인과 동일)
+        // 4) 서버 JWT access / refresh 발급 (이메일 로그인과 동일)
         String access = jwtTokenProvider.generateAccessToken(
                 user.getUserId(), user.getEmail(), user.getRole()
         );
