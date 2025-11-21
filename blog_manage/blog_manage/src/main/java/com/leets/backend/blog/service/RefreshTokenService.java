@@ -3,6 +3,7 @@ package com.leets.backend.blog.service;
 import com.leets.backend.blog.entity.RefreshToken;
 import com.leets.backend.blog.entity.User;
 import com.leets.backend.blog.exception.TokenRefreshException;
+import com.leets.backend.blog.exception.UserNotFoundException;
 import com.leets.backend.blog.repository.RefreshTokenRepository;
 import com.leets.backend.blog.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +33,7 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken createRefreshToken(String userEmail) {
-        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException("User not found with email: " + userEmail));
 
         // 기존 리프레시 토큰이 있다면 삭제
         refreshTokenRepository.findByUser(user).ifPresent(refreshTokenRepository::delete);

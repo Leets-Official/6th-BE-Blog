@@ -79,7 +79,8 @@ public class AuthService {
                 .map(user -> {
                     Authentication authentication = new UsernamePasswordAuthenticationToken(new CustomUserDetails(user), null, Collections.emptyList());
                     String newAccessToken = jwtTokenProvider.generateAccessToken(authentication);
-                    return new AuthResponse(newAccessToken, refreshTokenValue);
+                    RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getEmail());
+                    return new AuthResponse(newAccessToken, newRefreshToken.getToken());
                 })
                 .orElseThrow(() -> new TokenRefreshException(refreshTokenValue, "Refresh token not found"));
     }

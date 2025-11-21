@@ -17,6 +17,26 @@ spring:
   sql:
     init:
       mode: always       # 항상 data.sql 실행
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: d366fd52a1bffdc97155aee52b8c654f
+            client-secret: w9o8itfRlbk15gR8e3fhn6S54JLSHjI2
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
 
 logging:
   level:

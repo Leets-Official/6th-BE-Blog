@@ -89,6 +89,10 @@ public class User{
         this.updatedAt = updatedAt;
     }
 
+    public void setKakaoId(String kakaoId) {
+        this.kakaoId = kakaoId;
+    }
+
     // 사용자 정보 업데이트 메서드
     public void update(String nickname, String password, String profileUrl, LocalDateTime updatedAt) {
         if (nickname != null && !nickname.isEmpty()) {
