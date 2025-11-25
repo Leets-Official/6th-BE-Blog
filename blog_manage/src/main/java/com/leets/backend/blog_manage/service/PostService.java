@@ -15,6 +15,10 @@ import org.springframework.security.core.context.SecurityContextHolder; //
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 게시물 서비스
+ * 게시물 CRUD 비즈니스 로직 처리
+ */
 @Service
 public class PostService {
     private final PostRepository postRepository;
@@ -25,13 +29,14 @@ public class PostService {
         this.userRepository = userRepository;
     }
 
-    // SecurityContext에서 인증된 사용자 정보를 가져오는 메소드
+    /** 인증된 사용자 정보 조회 */
     private User getAuthenticatedUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
+    /** 게시물 생성 */
     @Transactional
     public Post createPost(PostCreateRequest request) {
         User user = getAuthenticatedUser();
@@ -39,17 +44,20 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    /** 게시물 목록 조회 (페이징) */
     @Transactional(readOnly = true)
     public Page<PostListResponse> getAllPosts(Pageable pageable) {
         return postRepository.findAll(pageable).map(PostListResponse::new);
     }
 
+    /** 게시물 조회 */
     @Transactional(readOnly = true)
     public Post findPostById(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
     }
 
+    /** 게시물 수정 - 작성자 본인만 가능 */
     @Transactional
     public void updatePost(Long postId, PostUpdateRequest request) {
         User user = getAuthenticatedUser();
@@ -61,6 +69,7 @@ public class PostService {
         post.update(request.getTitle(), request.getContent());
     }
 
+    /** 게시물 삭제 - 작성자 본인만 가능 */
     @Transactional
     public void deletePost(Long postId) {
         User user = getAuthenticatedUser();

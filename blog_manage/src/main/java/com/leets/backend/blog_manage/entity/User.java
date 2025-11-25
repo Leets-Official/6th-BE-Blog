@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 사용자 엔티티
+ */
 @Entity
 @Table(name = "user")
 public class User {
@@ -20,7 +23,6 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // ... 나머지 필드들 ...
     @Column(length = 20, nullable = false, unique = true)
     private String nickname;
 
@@ -36,10 +38,10 @@ public class User {
     private String introduction;
 
     @Column(length = 10, nullable = false)
-    private String loginType;
+    private String loginType; // EMAIL 또는 KAKAO
 
     @Column(length = 100)
-    private String kakaoId;
+    private String kakaoId; // 카카오 로그인 사용자만 사용
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

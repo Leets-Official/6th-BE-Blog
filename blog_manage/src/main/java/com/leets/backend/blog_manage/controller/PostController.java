@@ -17,6 +17,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 게시물 컨트롤러
+ * 게시물 CRUD 처리
+ */
 @Tag(name = "게시물 (Post) API", description = "게시물 CRUD 관련 API")
 @RestController
 @RequestMapping("/api/posts")

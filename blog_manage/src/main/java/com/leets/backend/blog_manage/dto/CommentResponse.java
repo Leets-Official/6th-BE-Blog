@@ -3,6 +3,9 @@ package com.leets.backend.blog_manage.dto;
 import com.leets.backend.blog_manage.entity.Comment;
 import java.time.LocalDateTime;
 
+/**
+ * 댓글 응답 DTO
+ */
 public class CommentResponse {
     private final Long id;
     private final String content;

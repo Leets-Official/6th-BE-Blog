@@ -3,6 +3,9 @@ package com.leets.backend.blog_manage.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * 리프레시 토큰 엔티티
+ */
 @Entity
 @Table(name = "refresh_token")
 public class RefreshToken {
@@ -34,6 +37,7 @@ public class RefreshToken {
         return new RefreshTokenBuilder();
     }
 
+    /** 리프레시 토큰 갱신 */
     public void updateToken(String token, LocalDateTime expiryDate) {
         this.token = token;
         this.expiryDate = expiryDate;

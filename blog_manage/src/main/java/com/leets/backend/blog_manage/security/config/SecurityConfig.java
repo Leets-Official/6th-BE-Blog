@@ -20,6 +20,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+/**
+ * Spring Security 설정
+ * JWT 인증, CORS, 인가 처리
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -30,16 +34,19 @@ public class SecurityConfig {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    /** 비밀번호 암호화 인코더 */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /** 인증 관리자 */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /** CORS 설정 */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -53,6 +60,7 @@ public class SecurityConfig {
         return source;
     }
 
+    /** Security 필터 체인 설정 */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -63,7 +71,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(authorize -> authorize
-                        // 기존 signup, login 외에 kakao/login, kakao/signup 2개 추가
                         .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/kakao/login", "/api/auth/kakao/signup").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()

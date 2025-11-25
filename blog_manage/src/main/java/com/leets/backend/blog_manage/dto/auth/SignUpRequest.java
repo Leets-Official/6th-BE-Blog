@@ -9,6 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * 이메일 회원가입 요청 DTO
+ */
 public class SignUpRequest {
 
     @NotBlank(message = "이메일을 입력해주세요.")
@@ -53,7 +56,7 @@ public class SignUpRequest {
     public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
     public void setIntroduction(String introduction) { this.introduction = introduction; }
 
-    // DTO를 Entity로 변환 (비밀번호 암호화 포함)
+    /** DTO를 Entity로 변환 (비밀번호 암호화) */
     public User toEntity(PasswordEncoder passwordEncoder) {
         return User.builder()
                 .email(this.email)

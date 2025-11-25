@@ -1,5 +1,8 @@
 package com.leets.backend.blog_manage.dto.auth;
 
+/**
+ * 카카오 로그인 응답 DTO
+ */
 public class KakaoLoginResponse {
     private String status; // "LOGIN_SUCCESS" 또는 "SIGNUP_REQUIRED"
     private TokenResponse tokens; // LOGIN_SUCCESS 시

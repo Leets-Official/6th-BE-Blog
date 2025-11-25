@@ -10,13 +10,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * 카카오 회원가입 요청 DTO
+ */
 public class KakaoSignUpRequest {
 
-    // (백엔드에서 전달받아 프론트가 다시 보내주는) 카카오 고유 ID
     @NotBlank
-    private String kakaoId;
-
-    // --- 사용자가 폼에서 직접 입력하는 정보 ---
+    private String kakaoId; // 카카오 고유 ID
     @NotBlank(message = "이메일을 입력해주세요.")
     @Email(message = "이메일 형식이 적합하지 않습니다.")
     @Size(max = 100)
@@ -35,12 +35,8 @@ public class KakaoSignUpRequest {
     @Size(max = 30, message = "한 줄 소개는 최대 30글자 입니다.")
     private String introduction;
 
-    // (참고: 프로필 사진은 피그마상 입력 폼에 없으므로 기본값 처리)
-
-    // DTO를 Entity로 변환
+    /** DTO를 Entity로 변환 (카카오 사용자는 더미 비밀번호 사용) */
     public User toEntity(PasswordEncoder passwordEncoder) {
-        // 카카오 로그인 사용자는 비밀번호를 사용하지 않으므로,
-        // NOT NULL 제약조건(ERD)을 맞추기 위해 임의의 값을 암호화하여 저장
         String dummyPassword = "KAKAO_USER_DUMMY_PASSWORD_" + UUID.randomUUID();
 
         return User.builder()

@@ -3,6 +3,9 @@ package com.leets.backend.blog_manage.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * 댓글 엔티티
+ */
 @Entity
 @Table(name = "comment")
 public class Comment {
@@ -29,6 +32,7 @@ public class Comment {
 
     public Comment() {}
 
+    /** 댓글 생성 생성자 */
     public Comment(String content, User user, Post post) {
         this.content = content;
         this.user = user;
@@ -36,6 +40,7 @@ public class Comment {
         this.createdAt = LocalDateTime.now();
     }
 
+    /** 댓글 수정 */
     public void update(String content) {
         this.content = content;
         this.updatedAt = LocalDateTime.now();

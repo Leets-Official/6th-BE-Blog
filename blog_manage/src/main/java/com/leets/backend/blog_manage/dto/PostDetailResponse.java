@@ -3,6 +3,9 @@ package com.leets.backend.blog_manage.dto;
 import com.leets.backend.blog_manage.entity.Post;
 import java.time.LocalDateTime;
 
+/**
+ * 게시물 상세 응답 DTO
+ */
 public class PostDetailResponse {
     private final Long id;
     private final String title;

@@ -2,6 +2,9 @@ package com.leets.backend.blog_manage.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * 게시물 수정 요청 DTO
+ */
 public class PostUpdateRequest {
     @NotBlank(message = "제목을 입력해주세요")
     private String title;

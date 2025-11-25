@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+/**
+ * 게시물 목록 응답 DTO
+ */
 public class PostListResponse {
     private final Long id;
     private final String title;

@@ -1,10 +1,12 @@
 package com.leets.backend.blog_manage.dto.auth;
 
+/**
+ * JWT 토큰 응답 DTO
+ */
 public class TokenResponse {
 
     private String accessToken;
 
-    // 생성자
     public TokenResponse(String accessToken) {
         this.accessToken = accessToken;
     }

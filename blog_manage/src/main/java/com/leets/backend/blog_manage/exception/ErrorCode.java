@@ -2,6 +2,10 @@ package com.leets.backend.blog_manage.exception;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * 에러 코드 정의
+ * HTTP 상태 코드와 에러 메시지 포함
+ */
 public enum ErrorCode {
     // 400 Bad Request
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "유효하지 않은 입력 값입니다."),
@@ -25,7 +29,7 @@ public enum ErrorCode {
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
     NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 닉네임입니다."),
 
-    // 카카오 API 통신 오류
+    // 500 Internal Server Error
     KAKAO_AUTH_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "카카오 인증 중 오류가 발생했습니다.");
 
 

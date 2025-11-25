@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 인증 컨트롤러
+ * 회원가입, 로그인, 카카오 로그인 처리
+ */
 @Tag(name = "인증 (Auth) API", description = "사용자 회원가입 및 로그인 관련 API")
 @RestController
 @RequestMapping("/api/auth")
@@ -47,7 +51,7 @@ public class AuthController {
         );
     }
 
-    // --- [1. 카카오 로그인 API 추가] ---
+    /** 카카오 로그인 - 기존 사용자는 로그인, 신규 사용자는 회원가입 필요 응답 */
     @Operation(summary = "카카오 로그인", description = "카카오 인증 코드로 로그인/회원가입 여부를 분기합니다.")
     @PostMapping("/kakao/login")
     public ResponseEntity<ApiResponse<KakaoLoginResponse>> kakaoLogin(
@@ -56,7 +60,6 @@ public class AuthController {
 
         KakaoLoginResponse kakaoResponse = authService.kakaoLogin(request, response);
 
-        // KakaoLoginResponse의 status에 따라 다른 메시지 반환
         String message = "SIGNUP_REQUIRED".equals(kakaoResponse.getStatus()) ?
                 "카카오 인증 성공. 회원가입이 필요합니다." :
                 "카카오 로그인 성공";
@@ -66,7 +69,7 @@ public class AuthController {
         );
     }
 
-    // --- [2. 카카오 회원가입 API 추가] ---
+    /** 카카오 회원가입 - 사용자 정보 입력 후 회원가입 완료 및 로그인 */
     @Operation(summary = "카카오 회원가입", description = "카카오 ID와 사용자가 직접 입력한 정보로 회원가입을 완료합니다.")
     @PostMapping("/kakao/signup")
     public ResponseEntity<ApiResponse<TokenResponse>> kakaoSignUp(
