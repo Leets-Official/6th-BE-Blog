@@ -21,4 +21,19 @@ public class CommentResponse {
 
         return response;
     }
+    public Long getCommentId() {
+        return commentId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

@@ -18,9 +18,10 @@ public class JwtTokenProvider {
     private final long refreshTokenValidityMs;
 
     public JwtTokenProvider(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-token-validity}") long accessValidity,
-            @Value("${jwt.refresh-token-validity}") long refreshValidity) {
+            @Value("${spring.jwt.secret}") String secret,
+            @Value("${spring.jwt.access-token-validity}") long accessValidity,
+            @Value("${spring.jwt.refresh-token-validity}") long refreshValidity) {
+
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.accessTokenValidityMs = accessValidity;
         this.refreshTokenValidityMs = refreshValidity;
@@ -52,11 +53,9 @@ public class JwtTokenProvider {
     }
 
     public String generateToken(String subject) {
-        // 기본적으로 USER 권한으로 AccessToken 생성
         return createAccessToken(subject, "ROLE_USER");
     }
 
-    // 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(key).build().parseClaimsJws(token);
@@ -66,7 +65,6 @@ public class JwtTokenProvider {
         }
     }
 
-    // 토큰에서 이메일 추출
     public String getSubject(String token) {
         return Jwts.parser().setSigningKey(key)
                 .build()
@@ -75,7 +73,6 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    // 토큰 만료시간 추출
     public Date getExpiration(String token) {
         return Jwts.parser().setSigningKey(key)
                 .build()
