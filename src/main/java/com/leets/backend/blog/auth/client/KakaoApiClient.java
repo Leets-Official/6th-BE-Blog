@@ -80,7 +80,7 @@ public class KakaoApiClient {
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 Map<String, Object> body = response.getBody();
 
-                Map<String, Object> kakaoAccount = (Map<String, Object>) body.get("Kakao_Account");
+                Map<String, Object> kakaoAccount = (Map<String, Object>) body.get("kakao_account");
 
                 if (kakaoAccount == null || !(Boolean) kakaoAccount.getOrDefault("is_email_valid", false)) {
                     throw new CustomException(ErrorCode.KAKAO_EMAIL_SCOPE_REQUIRED, "카카오 이메일 정보 접근 동의가 필요합니다.");
