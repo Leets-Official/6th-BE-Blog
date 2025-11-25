@@ -26,6 +26,21 @@ public class Comment {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+    protected Comment() {}
+
+    public static Comment createComment(String content, User user, Post post) {
+        Comment comment = new Comment();
+        comment.content = content;
+        comment.user = user;
+        comment.post = post;
+        comment.createdAt = LocalDateTime.now();
+        return comment;
+    }
+
+    public void updateComment(String newContent) {
+        this.content = newContent;
+    }
+
     // Getters
     public Long getCommentId() {
         return commentId;
