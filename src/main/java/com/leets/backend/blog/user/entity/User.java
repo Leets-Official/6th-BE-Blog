@@ -20,18 +20,24 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
+    @Column
+    private String profileImageUrl;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     protected User() {}  // JPA 기본 생성자
 
-    public User(String email, String password, String nickname) {
+    public User(String email, String password, String nickname,  String profileImageUrl) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
     }
 
-    // 비즈니스 로직
+    // 카카오 회원가입용 생성자 (비밀번호는 더미 값)
+    // 현재 코드에서는 소셜 비밀번호는 UUID로 처리한다고 가정
+
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }

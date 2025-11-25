@@ -1,6 +1,6 @@
 package com.leets.backend.blog.login.security;
 
-import com.leets.backend.blog.login.jwt.*;
+import com.leets.backend.blog.common.config.jwt.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,9 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
     private final CustomUserDetailsService userService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtTokenProvider;
 
-    public SecurityConfig(CustomUserDetailsService userService, JwtTokenProvider jwtTokenProvider) {
+    public SecurityConfig(CustomUserDetailsService userService, JwtProvider jwtTokenProvider) {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
