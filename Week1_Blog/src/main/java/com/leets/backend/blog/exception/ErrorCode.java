@@ -12,12 +12,14 @@ public enum ErrorCode {
     DUPLICATED_KAKAO_ID(HttpStatus.CONFLICT, "중복된 카카오 아이디입니다."),
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "중복된 닉네임 입니다."),
     INVALID_EMAIL(HttpStatus.UNAUTHORIZED, "가입되지 않은 이메일입니다."),
+    INVALID_KAKAO_ID(HttpStatus.UNAUTHORIZED, "가입되지 않은 카카오 아이디입니다."),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "회원 정보 인증에 실패하였습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않거나 잘못된 형식의 리프레시 토큰입니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "존재하지않는 리프레시 토큰입니다."),
     REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었습니다. 다시 로그인해 주세요."),
-    REFRESH_TOKEN_REVOKED(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 이미 취소되었습니다. 다시 로그인해 주세요."),;
+    REFRESH_TOKEN_REVOKED(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 이미 취소되었습니다. 다시 로그인해 주세요."),
+    JSON_PARSE_ERROR(HttpStatus.BAD_REQUEST, "Json 파싱에 실패하였습니다.");
 
     private final HttpStatus status;
     private final String message;

@@ -2,6 +2,8 @@ package com.leets.backend.blog.controller;
 
 import com.leets.backend.blog.dto.request.LoginRequestDTO;
 import com.leets.backend.blog.dto.request.UserCreateRequestDTO;
+import com.leets.backend.blog.dto.response.KakaoLoginResponseDTO;
+import com.leets.backend.blog.dto.response.KakaoTokenDTO;
 import com.leets.backend.blog.dto.response.LoginResponseDTO;
 import com.leets.backend.blog.dto.response.UserResponseDTO;
 import com.leets.backend.blog.security.JwtTokenProvider;
@@ -9,6 +11,7 @@ import com.leets.backend.blog.service.AuthService;
 import io.micrometer.common.util.StringUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -32,12 +35,42 @@ public class AuthController {
             summary = "로그인 인증",
             description = "로그인 요청, 성공 시 success: true, 닉네임, access token 반환, refresh token은 HttpOnly 쿠키로 설정"
     )
-    @PostMapping("/login")
+    @PostMapping("/login/email")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO request) {
-        LoginResponseDTO response = service.userLogin(request);
+
+        LoginResponseDTO response = service.loginWithEmail(request);
 
         String refreshToken = tokenProvider.createRefreshToken(request.getEmail());
         String accessToken = tokenProvider.createAccessToken(request.getEmail());
+
+        service.saveRefreshToken(response.getEmail(), refreshToken);
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false) // HTTPS 환경에서만 true
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60) // 7일 (원하는 만료시간으로 조정)
+                .sameSite("Strict")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .body(response);
+    }
+
+    @Operation(
+            summary = "카카오 유저 로그인 인증",
+            description = "먼저 카카오 oAuth로 검증 후 로그인 검증, 성공 시 success: true, 닉네임, access token 반환, refresh token은 HttpOnly 쿠키로 설정"
+    )
+    @GetMapping("/login/kakao")
+            public ResponseEntity<KakaoLoginResponseDTO> kakaoLogin(@RequestParam("code") String accessCode) {
+        KakaoLoginResponseDTO response = service.loginWithKakao(accessCode, false);
+
+        String refreshToken = tokenProvider.createRefreshToken(response.getKakaoId());
+        String accessToken = tokenProvider.createAccessToken(response.getKakaoId());
+
+        service.saveRefreshToken(response.getEmail(), refreshToken);
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
@@ -99,5 +132,12 @@ public class AuthController {
     @PostMapping("/register")
     public UserResponseDTO createUser(@Valid @RequestBody UserCreateRequestDTO dto){
         return service.createUser(dto);
+    }
+
+    @GetMapping("/register/kakao")
+    public KakaoLoginResponseDTO kakaoRegister(@RequestParam("code") String accessCode){
+        KakaoLoginResponseDTO response = service.loginWithKakao(accessCode, true);
+
+        return response;
     }
 }
