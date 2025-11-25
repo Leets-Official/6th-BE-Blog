@@ -23,7 +23,8 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<PostDetailResponse> createPost(@Valid @RequestBody PostSaveRequest request) {
-        PostDetailResponse response = postService.createPost(1L, request); // 임시 userId
+        // userId 파라미터 제거 (Service에서 SecurityUtil로 처리)
+        PostDetailResponse response = postService.createPost(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -35,19 +36,22 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostDetailResponse> getPostById(@PathVariable Long postId) {
-        PostDetailResponse response = postService.findPostById(1L, postId); // 임시 userId
+        // userId 파라미터 제거
+        PostDetailResponse response = postService.findPostById(postId);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{postId}")
     public ResponseEntity<PostDetailResponse> updatePost(@PathVariable Long postId, @Valid @RequestBody PostSaveRequest request) {
-        PostDetailResponse response = postService.updatePost(1L, postId, request); // 임시 userId
+        // userId 파라미터 제거
+        PostDetailResponse response = postService.updatePost(postId, request);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
-        postService.deletePost(1L, postId); // 임시 userId
+        // userId 파라미터 제거
+        postService.deletePost(postId);
         return ResponseEntity.noContent().build();
     }
 }

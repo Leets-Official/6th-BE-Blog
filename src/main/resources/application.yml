@@ -10,12 +10,12 @@ spring:
   # JPA 설정
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
     show-sql: true
-    open-in-view: false
+    open-in-view: true
 
   # Spring Security (OAuth2 Client) 설정
   security:
@@ -55,3 +55,9 @@ jwt:
   secret: "eW91ci1zdXBlci1zdHJvbmctc2VjcmV0LWtleS1iYXNlNjQtZW5jb2RlZA=="
   access-token-expiration-ms: 1800000
   refresh-token-expiration-ms: 604800000
+
+# [추가] 프론트엔드 리다이렉트 URL 설정
+# OAuth2AuthenticationSuccessHandler에서 @Value로 사용됨
+app:
+  oauth2:
+    redirect-uri: http://localhost:3000/auth/redirect

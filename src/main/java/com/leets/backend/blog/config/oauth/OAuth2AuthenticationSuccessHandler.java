@@ -1,16 +1,14 @@
 package com.leets.backend.blog.config.oauth;
 
 import com.leets.backend.blog.config.jwt.JwtTokenProvider;
-import com.leets.backend.blog.domain.RefreshToken;
 import com.leets.backend.blog.domain.User;
-import com.leets.backend.blog.repository.RefreshTokenRepository;
-import com.leets.backend.blog.repository.UserRepository;
-
+import com.leets.backend.blog.service.CustomOAuth2UserService;
+import com.leets.backend.blog.service.RefreshTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -27,16 +25,21 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private static final Logger log = LoggerFactory.getLogger(OAuth2AuthenticationSuccessHandler.class);
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository; // 3. [추가] UserRepository 필드
+    private final RefreshTokenService refreshTokenService;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
-    // 4. [수정] 생성자에 UserRepository 주입
+    // 1. [추가] 리다이렉트 URI를 담을 필드 선언
+    private final String redirectUri;
+
+    // 2. [수정] 생성자에 @Value를 사용하여 프로퍼티 값 주입
     public OAuth2AuthenticationSuccessHandler(JwtTokenProvider jwtTokenProvider,
-                                              RefreshTokenRepository refreshTokenRepository,
-                                              UserRepository userRepository) {
+                                              RefreshTokenService refreshTokenService,
+                                              CustomOAuth2UserService customOAuth2UserService,
+                                              @Value("${app.oauth2.redirect-uri}") String redirectUri) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.userRepository = userRepository;
+        this.refreshTokenService = refreshTokenService;
+        this.customOAuth2UserService = customOAuth2UserService;
+        this.redirectUri = redirectUri;
     }
 
     @Override
@@ -60,8 +63,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             return;
         }
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found in DB after OAuth login: " + email));
+        User user = customOAuth2UserService.getUserByEmail(email);
 
         Long userId = user.getId();
         String role = user.getRoleKey();
@@ -69,20 +71,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("OAuth2 login successful. Issuing JWT for User ID: {}, Email: {}, Role: {}", userId, email, role);
 
         String accessToken = jwtTokenProvider.createAccessToken(email, role, userId);
-
         String refreshToken = jwtTokenProvider.createRefreshToken(userId);
 
-        RefreshToken refreshTokenEntity = new RefreshToken(userId, refreshToken);
-        refreshTokenRepository.save(refreshTokenEntity);
+        refreshTokenService.saveRefreshToken(userId, refreshToken);
 
         String targetUrl = buildRedirectUrl(accessToken, refreshToken);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
     private String buildRedirectUrl(String accessToken, String refreshToken) {
-        String frontendCallbackUrl = "http://localhost:3000/auth/redirect";
-
-        return UriComponentsBuilder.fromUriString(frontendCallbackUrl)
+        // 3. [수정] 하드코딩된 문자열 대신 주입받은 필드(redirectUri) 사용
+        return UriComponentsBuilder.fromUriString(redirectUri)
                 .queryParam("accessToken", accessToken)
                 .queryParam("refreshToken", refreshToken)
                 .build()
