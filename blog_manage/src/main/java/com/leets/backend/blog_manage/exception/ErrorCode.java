@@ -23,7 +23,10 @@ public enum ErrorCode {
 
     // 409 Conflict
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
-    NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 닉네임입니다.");
+    NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 닉네임입니다."),
+
+    // 카카오 API 통신 오류
+    KAKAO_AUTH_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "카카오 인증 중 오류가 발생했습니다.");
 
 
     private final HttpStatus status;
