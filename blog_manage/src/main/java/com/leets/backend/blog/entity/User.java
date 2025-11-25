@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users") // 'user' 대신 'users' 권장
 public class User {
 
     @Id
@@ -13,7 +13,7 @@ public class User {
     private Long userId;
 
     @Column(nullable = false, unique = true)
-    private String email;
+    private String email; // 로그인 ID (email)
 
     @Column(nullable = false)
     private String name;
@@ -21,6 +21,7 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
+    // password는 OAuth 사용자 등에서 null일 수 있으므로 nullable = true 허용
     @Column(nullable = true)
     private String password;
 
@@ -39,8 +40,20 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    // 권한(ROLE_USER 등)
+    @Column(nullable = false)
+    private String role = "ROLE_USER";
+
     public User() {}
 
+    // 회원가입 등에서 쓸 생성자
+    public User(String email, String password, String name, String nickname, String role) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.role = role != null ? role : "ROLE_USER";
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -64,21 +77,19 @@ public class User {
     public LocalDateTime getBirth() { return birth; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public String getRole() { return role; }
 
-    // Setter / 업데이트 관련 메서드
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
+    // Setter
+    public void setEmail(String email) { this.email = email; }
+    public void setName(String name) { this.name = name; }
+    public void setNickname(String nickname) { this.nickname = nickname; }
+    public void setPassword(String password) { this.password = password; }
+    public void setIntroduction(String introduction) { this.introduction = introduction; }
+    public void setKakaoId(String kakaoId) { this.kakaoId = kakaoId; }
+    public void setBirth(LocalDateTime birth) { this.birth = birth; }
+    public void setRole(String role) { this.role = role; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setIntroduction(String introduction) {
-        this.introduction = introduction;
-    }
-
-
+    // 업데이트 편의 메서드
     public void update(String nickname, String password, String introduction) {
         if (nickname != null && !nickname.isBlank()) {
             this.nickname = nickname;
@@ -91,7 +102,6 @@ public class User {
         }
         this.updatedAt = LocalDateTime.now();
     }
-
 
     public static User createDummy() {
         User user = new User();
