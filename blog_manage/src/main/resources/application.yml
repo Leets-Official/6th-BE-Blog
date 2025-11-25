@@ -21,7 +21,23 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
-jwt:
-  secret: "ChangeThisToASuperLongRandomSecretKeyForJWT1234567890!@#ABCD"
-  access-token-validity: 900000         # 15분 (단위: 밀리초)
-  refresh-token-validity: 1209600000    # 14일 (단위: 밀리초)
+  jwt:
+    secret: "ChangeThisToASuperLongRandomSecretKeyForJWT1234567890!@#ABCD"
+    access-token-validity: 900000         # 15분 (단위: 밀리초)
+    refresh-token-validity: 1209600000    # 14일 (단위: 밀리초)
+
+logging:
+  level:
+    root: INFO
+    org.springframework: DEBUG
+    org.hibernate.SQL: DEBUG
+    com.leets.backend.blog: DEBUG
+    org.springframework.security: DEBUG
+
+
+kakao:
+  client-id: 832cf040e50187a709811294587535ee
+  client-secret: "STyTYjHaJyNFryjqlbjSK6fdKmoLrEsj"
+  redirect-uri: http://localhost:8080/api/auth/kakao/callback
+  token-uri: https://kauth.kakao.com/oauth/token
+  user-info-uri: https://kapi.kakao.com/v2/user/me

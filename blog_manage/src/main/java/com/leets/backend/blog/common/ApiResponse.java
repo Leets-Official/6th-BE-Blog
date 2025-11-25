@@ -28,16 +28,17 @@ public class ApiResponse<T> {
         return response;
     }
 
-    // Getter 추가 (JSON 직렬화용)
-    public int getStatus() {
-        return status;
+    // 데이터가 없을 때 간단하게 사용
+    public static <T> ApiResponse<T> onSuccess(String message) {
+        return onSuccess(HttpStatus.OK, message, null);
     }
 
-    public String getMessage() {
-        return message;
+    public static <T> ApiResponse<T> onFailure(HttpStatus status, String message) {
+        return onFailure(status, message, null);
     }
 
-    public T getData() {
-        return data;
-    }
+    // Getter
+    public int getStatus() { return status; }
+    public String getMessage() { return message; }
+    public T getData() { return data; }
 }
