@@ -1,7 +1,7 @@
 package com.leets.backend.blog_manage.controller;
 
 import com.leets.backend.blog_manage.common.ApiResponse;
-import com.leets.backend.blog_manage.dto.auth.*; // (모든 auth DTO 임포트)
+import com.leets.backend.blog_manage.dto.auth.*;
 import com.leets.backend.blog_manage.entity.User;
 import com.leets.backend.blog_manage.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;

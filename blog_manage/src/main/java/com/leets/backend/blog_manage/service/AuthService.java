@@ -61,7 +61,8 @@ public class AuthService {
                        @Value("${kakao.client-id}") String kakaoClientId,
                        @Value("${kakao.redirect-uri}") String kakaoRedirectUri,
                        @Value("${kakao.token-uri}") String kakaoTokenUri,
-                       @Value("${kakao.user-info-uri}") String kakaoUserInfoUri) {
+                       @Value("${kakao.user-info-uri}") String kakaoUserInfoUri,
+                       RestTemplate restTemplate) {
 
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
@@ -74,7 +75,7 @@ public class AuthService {
         this.kakaoRedirectUri = kakaoRedirectUri;
         this.kakaoTokenUri = kakaoTokenUri;
         this.kakaoUserInfoUri = kakaoUserInfoUri;
-        this.restTemplate = new RestTemplate(); // RestTemplate 생성
+        this.restTemplate = restTemplate; // RestTemplate 주입받기
     }
 
     /** 이메일 회원가입 */

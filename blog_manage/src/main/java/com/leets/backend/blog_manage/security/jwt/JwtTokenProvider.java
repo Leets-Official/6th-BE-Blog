@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -79,10 +80,18 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
 
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+        // AUTHORITIES_KEY가 없을 수 있음 (Refresh Token의 경우)
+        Object authoritiesObj = claims.get(AUTHORITIES_KEY);
+        Collection<? extends GrantedAuthority> authorities;
+        
+        if (authoritiesObj != null) {
+            authorities = Arrays.stream(authoritiesObj.toString().split(","))
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
+        } else {
+            // 권한 정보가 없으면 빈 리스트 반환 (Refresh Token의 경우)
+            authorities = Collections.emptyList();
+        }
 
         // UserDetails 객체를 만들어서 Authentication 반환
         UserDetails principal = new User(claims.getSubject(), "", authorities);
