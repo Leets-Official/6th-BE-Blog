@@ -9,32 +9,32 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     # 1. 코드 체크아웃
     - name: Checkout code
       uses: actions/checkout@v3
-    
+
     # 2. application.yml 파일 생성 (Secret에서)
     - name: Create application.yml from secret
       run: |
         echo "${{ secrets.APPLICATION_YML }}" > blog_manage/src/main/resources/application.yml
-    
+
     # 3. Docker Compose로 빌드 및 실행 (cd 명령어 필수!)
     - name: Run docker-compose
       run: |
         cd ${{ github.workspace }}/blog_manage
-        docker-compose up -d --build
-    
+        docker compose up -d --build
+
     # 4. 애플리케이션 헬스 체크
     - name: Health check
       run: |
         sleep 30
         curl -f http://localhost:8080/actuator/health || echo "Health check failed"
-    
+
     # 5. 로그 확인
     - name: Show logs
       if: always()
       run: |
         cd ${{ github.workspace }}/blog_manage
-        docker-compose logs
+        docker compose logs
