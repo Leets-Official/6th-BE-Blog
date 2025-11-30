@@ -68,6 +68,24 @@ public class TokenProvider {
                 .compact();
     }
 
+    public String generateAccessToken(Long userId, Duration ttl) {
+        Date now = new Date();
+        Date exp = new Date(now.getTime() + ttl.toMillis());
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", userId);
+        claims.put("tokenType", "accessToken");
+
+        return Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setIssuer(props.getIssuer())
+                .setIssuedAt(now)
+                .setExpiration(exp)
+                .addClaims(claims)
+                .signWith(hmacKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public String generateRefreshToken(String email, Long userId, Duration ttl) {
         Date now = new Date();
         Date exp = new Date(now.getTime() + ttl.toMillis());
@@ -86,6 +104,25 @@ public class TokenProvider {
                 .signWith(hmacKey, SignatureAlgorithm.HS256)
                 .compact();
     }
+
+    public String generateRefreshToken(Long userId, Duration ttl) {
+        Date now = new Date();
+        Date exp = new Date(now.getTime() + ttl.toMillis());
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", userId);
+        claims.put("tokenType", "refreshToken");
+
+        return Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setIssuer(props.getIssuer())
+                .setIssuedAt(now)
+                .setExpiration(exp)
+                .addClaims(claims)
+                .signWith(hmacKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
 
     public String createNewAccessTokenFromRefresh(String refreshToken, Duration accessTtl) {
         Claims claims = parseClaims(refreshToken);
