@@ -6,6 +6,7 @@ import leets.blogapplication.domain.enums.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,18 +36,14 @@ public class User implements UserDetails {
     @Column(length=500)
     private String profileImage;
 
-    //회원가입 방식 및 비밀번호
-    @Enumerated(EnumType.STRING)
-    @Column(nullable=false, length=10)
-    private Provider provider; // EMAIL or KAKAO
     @Column(nullable=false)
     private LocalDateTime createdAt;
     @Column(nullable=true)
     private LocalDateTime updatedAt;
     @Column
-    private String providerUserId; // KAKAO
-    @Column
     private String password;   // EMAIL
+    @Column(name = "display_name", nullable = false)
+    private String displayName;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
@@ -67,21 +64,13 @@ public class User implements UserDetails {
         ref.setRevoked(false);
     }
 
-    public static User createUserWithKakao(String email, String name, LocalDate birthdate,
-                                   String nickname, String intro, String profileImage, Provider provider,
-                                   String providerUserId) {
-        User user = new User();
-        user.status = UserStatus.ACTIVE;
-        user.email = email;
-        user.name = name;
-        user.birthdate = birthdate;
-        user.nickname = nickname;
-        user.intro = intro;
-        user.profileImage = profileImage;
-        user.provider = Provider.KAKAO;
-        user.createdAt = LocalDateTime.now();
-        user.providerUserId = providerUserId;
-        return user;
+    public static User newSocial(String email, String displayName) {
+        User u = new User();
+        u.setEmail(email);
+        u.setPassword(null);
+        u.setDisplayName(displayName != null ? displayName : "KakaoUser");
+        u.setCreatedAt(LocalDateTime.now());
+        return u;
     }
 
     public static User createUserWithEmail(String email, String name, LocalDate birthdate,
@@ -94,13 +83,12 @@ public class User implements UserDetails {
         user.nickname = nickname;
         user.intro = intro;
         user.profileImage = profileImage;
-        user.provider = Provider.EMAIL;
         user.createdAt = LocalDateTime.now();
         user.password = password;
         return user;
     }
 
-    public void updateEmailUser(String nickname, String intro, String email, String password, String name,
+    public void updateUser(String nickname, String intro, String email, String password, String name,
                                 LocalDate birthdate) {
         this.nickname = nickname;
         this.intro = intro;
@@ -110,9 +98,6 @@ public class User implements UserDetails {
         this.password = password;
         this.updatedAt = LocalDateTime.now();
     }
-
-//    public void updateKakaoUser() {}
-    //카카오는 대체 뭘 변경한다는 건지 모르겟어서 일단 주석처리 했습니다
 
     protected User () {}
 
@@ -133,5 +118,20 @@ public class User implements UserDetails {
     public String getUsername() { return id.toString(); }
 
     public String getEmail() { return email; }
+
+    // getters/setters
+    public void setId(Long id) { this.id = id; }
+
+    public void setEmail(String email) { this.email = email; }
+
+    public void setPassword(String password) { this.password = password; }
+
+    public String getDisplayName() { return displayName; }
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public void setNickname(String nickname) { this.nickname = nickname; }
 }
 
