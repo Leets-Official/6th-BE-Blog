@@ -1,14 +1,16 @@
-package com.leets.backend.blog_manage.entity; // 패키지 경로가 entity로 변경됨
+package com.leets.backend.blog_manage.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 게시물 엔티티
+ */
 @Entity
 @Table(name = "post")
 public class Post {
-    // ... 필드 정의는 기존과 동일 ...
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,7 +41,7 @@ public class Post {
 
     public Post() {}
 
-    // DTO를 위한 생성자 추가
+    /** 게시물 생성 생성자 */
     public Post(String title, String content, User user) {
         this.title = title;
         this.content = content;
@@ -47,7 +49,7 @@ public class Post {
         this.createdAt = LocalDateTime.now();
     }
 
-    // 수정 편의 메소드 추가
+    /** 게시물 수정 */
     public void update(String title, String content) {
         this.title = title;
         this.content = content;

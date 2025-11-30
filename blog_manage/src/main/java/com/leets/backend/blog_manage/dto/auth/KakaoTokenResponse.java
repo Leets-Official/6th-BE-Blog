@@ -2,7 +2,9 @@ package com.leets.backend.blog_manage.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-// 카카오 토큰 응답 DTO
+/**
+ * 카카오 토큰 응답 DTO
+ */
 public class KakaoTokenResponse {
 
     @JsonProperty("token_type")

@@ -1,7 +1,9 @@
 package com.leets.backend.blog_manage.dto.auth;
 
-// 카카오 사용자 정보 응답 DTO
-// 요구사항에 따라 카카오 고유 ID만 받습니다.
+/**
+ * 카카오 사용자 정보 응답 DTO
+ * 카카오 고유 ID만 포함
+ */
 public class KakaoUserInfoResponse {
 
     private String id; // 카카오 고유 ID

@@ -8,6 +8,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 사용자 인증 정보 로드 서비스
+ * 이메일로 사용자 조회하여 UserDetails 반환
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 

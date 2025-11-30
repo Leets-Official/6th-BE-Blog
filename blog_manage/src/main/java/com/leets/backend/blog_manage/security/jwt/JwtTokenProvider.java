@@ -18,9 +18,13 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+/**
+ * JWT 토큰 생성 및 검증 처리
+ */
 @Component
 public class JwtTokenProvider {
 
@@ -41,7 +45,7 @@ public class JwtTokenProvider {
         this.refreshTokenExpirationTime = refreshTokenExpirationTime;
     }
 
-    // Access Token 생성
+    /** Access Token 생성 */
     public String createAccessToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -59,7 +63,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Refresh Token 생성 (만료 시간 외에는 Access Token과 유사하게 생성)
+    /** Refresh Token 생성 */
     public String createRefreshToken(Authentication authentication) {
         long now = (new Date()).getTime();
         Date expiryDate = new Date(now + refreshTokenExpirationTime);
@@ -72,21 +76,29 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // 토큰으로 Authentication 객체 생성
+    /** 토큰에서 Authentication 객체 생성 */
     public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
 
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+        // AUTHORITIES_KEY가 없을 수 있음 (Refresh Token의 경우)
+        Object authoritiesObj = claims.get(AUTHORITIES_KEY);
+        Collection<? extends GrantedAuthority> authorities;
+        
+        if (authoritiesObj != null) {
+            authorities = Arrays.stream(authoritiesObj.toString().split(","))
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
+        } else {
+            // 권한 정보가 없으면 빈 리스트 반환 (Refresh Token의 경우)
+            authorities = Collections.emptyList();
+        }
 
         // UserDetails 객체를 만들어서 Authentication 반환
         UserDetails principal = new User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    // 토큰 검증
+    /** 토큰 유효성 검증 */
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -103,22 +115,21 @@ public class JwtTokenProvider {
         return false;
     }
 
-    // 토큰에서 Claims 정보 추출
+    /** 토큰에서 Claims 추출 */
     private Claims parseClaims(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
-            // 만료된 토큰이더라도 Claims는 반환
             return e.getClaims();
         }
     }
 
-    // 토큰에서 이메일(Subject) 추출
+    /** 토큰에서 이메일(Subject) 추출 */
     public String getEmailFromToken(String token) {
         return parseClaims(token).getSubject();
     }
 
-    // Request Header에서 토큰 정보 추출
+    /** Request Header에서 토큰 추출 */
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {

@@ -1,5 +1,9 @@
 package com.leets.backend.blog_manage.common;
 
+/**
+ * API 응답 공통 포맷
+ * @param <T> 응답 데이터 타입
+ */
 public class ApiResponse<T> {
 
     private final String status;
@@ -12,10 +16,12 @@ public class ApiResponse<T> {
         this.data = data;
     }
 
+    /** 성공 응답 생성 */
     public static <T> ApiResponse<T> success(String message, T data) {
         return new ApiResponse<>("success", message, data);
     }
 
+    /** 에러 응답 생성 */
     public static <T> ApiResponse<T> error(String message) {
         return new ApiResponse<>("error", message, null);
     }

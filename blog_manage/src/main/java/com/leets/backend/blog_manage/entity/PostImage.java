@@ -2,6 +2,9 @@ package com.leets.backend.blog_manage.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * 게시물 이미지 엔티티
+ */
 @Entity
 @Table(name = "post_image")
 public class PostImage {
@@ -14,7 +17,7 @@ public class PostImage {
     private String imageUrl;
 
     @Column(name = "image_order")
-    private Integer imageOrder;
+    private Integer imageOrder; // 이미지 순서
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)

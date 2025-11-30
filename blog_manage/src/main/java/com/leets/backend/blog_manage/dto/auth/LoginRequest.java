@@ -3,6 +3,9 @@ package com.leets.backend.blog_manage.dto.auth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * 이메일 로그인 요청 DTO
+ */
 public class LoginRequest {
 
     @NotBlank(message = "이메일을 입력해주세요.")

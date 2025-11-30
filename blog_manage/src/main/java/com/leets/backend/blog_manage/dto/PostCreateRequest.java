@@ -4,6 +4,9 @@ import com.leets.backend.blog_manage.entity.Post;
 import com.leets.backend.blog_manage.entity.User;
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * 게시물 생성 요청 DTO
+ */
 public class PostCreateRequest {
     @NotBlank(message = "제목을 입력해주세요")
     private String title;
