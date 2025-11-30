@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "성현준/main", "main" ]
+    branches: [ "성현준/main", "main", "성현준/8주차" ]
   pull_request:
-    branches: [ "성현준/main", "main" ]
+    branches: [ "성현준/main", "main", "성현준/8주차" ]
 
 jobs:
   build-and-deploy:
