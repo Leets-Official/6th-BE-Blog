@@ -1,9 +1,10 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/leetsdb?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=utf8
-    username: root
-    password: "0902"
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -11,6 +12,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
 server:
   port: 8080
 
@@ -24,12 +26,12 @@ springdoc:
 
 kakao:
   oauth:
-    client-id: 832cf040e50187a709811294587535ee
-    client-secret: STyTYjHaJyNFryjqlbjSK6fdKmoLrEsj
-    redirect-uri: http://localhost:8080/auth/kakao/callback
+    client-id: ${KAKAO_CLIENT_ID}
+    client-secret: ${KAKAO_CLIENT_SECRET}
+    redirect-uri: ${KAKAO_REDIRECT_URI}
 
 security:
   jwt:
-    secret: g7Wn9vKzE9f3HqV4zD0OErfYh8cKq6LxT0ZzB+Q8m9GfHkP7d9Sxv2Aq9rV1p3Wn==
-    access-exp: 1800
-    refresh-exp: 120
+    secret: ${JWT_SECRET}
+    access-exp: ${JWT_ACCESS_EXP}
+    refresh-exp: ${JWT_REFRESH_EXP}
