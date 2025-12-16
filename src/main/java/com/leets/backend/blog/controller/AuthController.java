@@ -4,6 +4,7 @@ import com.leets.backend.blog.dto.LoginRequest;
 import com.leets.backend.blog.dto.LoginResponse;
 import com.leets.backend.blog.dto.SignupRequest;
 import com.leets.backend.blog.service.AuthService;
+import com.leets.backend.blog.dto.KakaoLoginRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest req) {
         return ResponseEntity.ok(authService.login(req));
+    }
+
+    @PostMapping("/kakao")
+    public ResponseEntity<LoginResponse> loginWithKakao(@Valid @RequestBody KakaoLoginRequest req) {
+        return ResponseEntity.ok(authService.loginWithKakao(req));
     }
 
     @PostMapping("/refresh")

@@ -1,9 +1,13 @@
 package com.leets.backend.blog.service;
 
 import com.leets.backend.blog.auth.JwtTokenProvider;
+import com.leets.backend.blog.auth.KakaoOAuthClient;
+import com.leets.backend.blog.auth.KakaoOAuthTokenResponse;
+import com.leets.backend.blog.auth.KakaoUserProfile;
 import com.leets.backend.blog.dto.LoginRequest;
 import com.leets.backend.blog.dto.LoginResponse;
 import com.leets.backend.blog.dto.SignupRequest;
+import com.leets.backend.blog.dto.KakaoLoginRequest;
 import com.leets.backend.blog.entity.Token;
 import com.leets.backend.blog.entity.User;
 import com.leets.backend.blog.repository.*;
@@ -21,15 +25,18 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtProvider; // 네가 쓰는 구현 재사용
     private final TokenService tokenService;
+    private final KakaoOAuthClient kakaoOAuthClient;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        JwtTokenProvider jwtProvider,
-                       TokenService tokenService) {
+                       TokenService tokenService,
+                       KakaoOAuthClient kakaoOAuthClient) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
         this.tokenService = tokenService;
+        this.kakaoOAuthClient = kakaoOAuthClient;
     }
 
 
@@ -60,6 +67,62 @@ public class AuthService {
         String refreshTokenPlain = tokenService.issueRefreshToken(user);
 
         return new LoginResponse(accessToken, refreshTokenPlain);
+    }
+
+    public LoginResponse loginWithKakao(KakaoLoginRequest request) {
+        KakaoOAuthTokenResponse tokenResponse = kakaoOAuthClient.exchangeCodeForToken(request.getAuthorizationCode());
+        KakaoUserProfile profile = kakaoOAuthClient.fetchUserProfile(tokenResponse.getAccessToken());
+
+        User user = userRepository.findByKakaoId(profile.getKakaoId())
+                .map(existing -> {
+                    existing.updateKakaoProfile(
+                            profile.getEmail(),
+                            profile.getNickname(),
+                            profile.getName(),
+                            profile.getProfileImageUrl()
+                    );
+                    return existing;
+                })
+                .orElseGet(() -> registerKakaoUser(profile));
+
+        String subject = user.getEmail();
+        if (subject == null || subject.isBlank()) {
+            subject = "kakao:" + user.getKakaoId();
+        }
+
+        String accessToken = jwtProvider.createAccessToken(subject);
+        String refreshTokenPlain = tokenService.issueRefreshToken(user);
+
+        return new LoginResponse(accessToken, refreshTokenPlain);
+    }
+
+    private User registerKakaoUser(KakaoUserProfile profile) {
+        String email = profile.getEmail();
+        if (email == null || email.isBlank()) {
+            email = "kakao-" + profile.getKakaoId() + "@oauth.local";
+        }
+
+        String nickname = profile.getNickname();
+        if (nickname == null || nickname.isBlank()) {
+            nickname = "kakao_" + profile.getKakaoId();
+        }
+
+        String name = profile.getName();
+        if (name == null || name.isBlank()) {
+            name = nickname;
+        }
+
+        String randomPassword = passwordEncoder.encode("kakao-" + profile.getKakaoId() + "-" + System.nanoTime());
+
+        User user = User.createKakao(
+                profile.getKakaoId(),
+                email,
+                randomPassword,
+                nickname,
+                name,
+                profile.getProfileImageUrl()
+        );
+        return userRepository.save(user);
     }
 
     public String refreshAccess(String refreshPlain) {

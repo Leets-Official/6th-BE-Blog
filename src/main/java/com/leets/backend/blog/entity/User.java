@@ -62,12 +62,87 @@ public class User {
         u.createdAt = LocalDateTime.now();
         return u;
     }
-    public Long getId(){return id;}
-    public String getAuthIdentities(){return authIdentities;}
-    public String getEmail(){return email;}
-    public String getPas() {return pas;}
-    public String getName(){return name;}
-    public LocalDate getBirth(){return birth;}
+
+    public static User createKakao(String kakaoId,
+                                   String email,
+                                   String encodedPassword,
+                                   String nickname,
+                                   String name,
+                                   String profileImage) {
+        User u = new User();
+        u.authIdentities = "kakao";
+        u.kakaoId = kakaoId;
+        u.email = email;
+        u.pas = encodedPassword;
+        u.nick = nickname;
+        u.name = name;
+        u.profileImage = profileImage;
+        u.createdAt = LocalDateTime.now();
+        return u;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getAuthIdentities() {
+        return authIdentities;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPas() {
+        return pas;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public LocalDate getBirth() {
+        return birth;
+    }
+
+    public String getNick() {
+        return nick;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public String getKakaoId() {
+        return kakaoId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void updateKakaoProfile(String email,
+                                   String nickname,
+                                   String name,
+                                   String profileImage) {
+        if (email != null && !email.isBlank()) {
+            this.email = email;
+        }
+        if (nickname != null && !nickname.isBlank()) {
+            this.nick = nickname;
+        }
+        if (name != null && !name.isBlank()) {
+            this.name = name;
+        }
+        if (profileImage != null && !profileImage.isBlank()) {
+            this.profileImage = profileImage;
+        }
+        this.updatedAt = LocalDateTime.now();
+    }
 
 
 }

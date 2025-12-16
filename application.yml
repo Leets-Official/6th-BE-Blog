@@ -22,9 +22,14 @@ springdoc:
     operationsSorter: method
     tagsSorter: alpha
 
+kakao:
+  oauth:
+    client-id: 832cf040e50187a709811294587535ee
+    client-secret: STyTYjHaJyNFryjqlbjSK6fdKmoLrEsj
+    redirect-uri: http://localhost:8080/auth/kakao/callback
 
 security:
   jwt:
     secret: g7Wn9vKzE9f3HqV4zD0OErfYh8cKq6LxT0ZzB+Q8m9GfHkP7d9Sxv2Aq9rV1p3Wn==
     access-exp: 1800
-    refresh-exp: 1209600
+    refresh-exp: 120
